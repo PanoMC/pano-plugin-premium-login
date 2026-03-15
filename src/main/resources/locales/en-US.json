@@ -1,3 +1,35 @@
 {
-  "hello-world": "Hello world!"
+  "account-type": {
+    "premium": "Premium",
+    "cracked": "Cracked",
+    "auto": "Automatic"
+  },
+  "panel-edit": {
+    "title": "Authentication Status",
+    "desc": "Set whether this player uses a premium (Mojang/Microsoft) or cracked (offline) account.",
+    "source-info": "Last updated by: {source}"
+  },
+  "sidebar": {
+    "title": "Authentication Status",
+    "source": "Source: {source}"
+  },
+  "settings": {
+    "title": "Authentication Status",
+    "desc": "Your Minecraft authentication type. You can change this to match your account.",
+    "info": "Selecting 'Automatic' lets the server detect your account type on login.",
+    "save": "Save",
+    "saved": "Saved!"
+  },
+  "profile-sidebar": {
+    "title": "Authentication Status"
+  },
+  "permissions": {
+    "MANAGE_PREMIUM_STATUS": {
+      "title": "Manage Premium Status",
+      "description": "Can view and change player authentication status (Premium/Cracked) from the player detail page."
+    }
+  },
+  "activity-logs": {
+    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> changed the authentication status of player <b>{targetUsername}</b> to <b>{newAccountType}</b>."
+  }
 }

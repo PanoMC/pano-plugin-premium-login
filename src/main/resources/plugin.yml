@@ -1,0 +1,9 @@
+name: PremiumLogin
+main: com.panomc.plugins.premiumlogin.mc.spigot.PremiumLoginSpigotPlugin
+version: ${version}
+author: Pano MC
+description: Detects premium/cracked players and syncs with Pano platform.
+website: https://panomc.com
+api-version: '1.13'
+folia-supported: true
+depend: [ Pano, FastLogin ]

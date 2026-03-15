@@ -1,0 +1,8 @@
+name: PremiumLogin
+main: com.panomc.plugins.premiumlogin.mc.bungee.PremiumLoginBungeePlugin
+version: ${version}
+author: Pano MC
+description: Detects premium/cracked players and syncs with Pano platform.
+depends:
+  - Pano
+  - FastLogin

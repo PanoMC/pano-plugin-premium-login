@@ -18,7 +18,9 @@ val handlebarsVersion: String by project
 val springContextVersion: String by project
 val bootstrap = (project.findProperty("bootstrap") as String?)?.toBoolean() ?: false
 val noui = project.hasProperty("noui")
-val pluginsDir: File? by rootProject.extra
+val pluginsDir: File? = runCatching { rootProject.extra["pluginsDir"] as? File }.getOrNull()
+
+val fastLoginVersion = "1.12-SNAPSHOT"
 
 val os = System.getProperty("os.name").lowercase()
 val arch = System.getProperty("os.arch").lowercase()
@@ -59,17 +61,33 @@ val pluginRequires: String? by project
 
 val organization: String? by project
 
+// MC plugin dependency versions
+val spigotApiVersion: String by project
+val bungeecordApiVersion: String by project
+val velocityApiVersion: String by project
+
 repositories {
+    mavenLocal()
     mavenCentral()
     maven("https://jitpack.io")
+    // MC platform repos
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://libraries.minecraft.net")
+    // FastLogin (CodeMC)
+    maven("https://repo.codemc.io/repository/maven-public/")
 }
 
 dependencies {
     if (bootstrap) {
         compileOnly(project(mapOf("path" to ":Pano")))
     } else {
-        compileOnly("com.github.panomc:pano:v1.0.0-alpha.336")
+        compileOnly("com.github.panomc:pano:v1.0.0-alpha.417")
     }
+
+    // pano-mc-plugin Core — provides PlatformManager, PlatformRequest, PlatformMessageResponse
+    compileOnly("com.github.panomc.pano-mc-plugin:Core:v1.0.0-alpha.45")
 
     compileOnly(kotlin("stdlib-jdk8"))
     compileOnly(kotlin("reflect"))
@@ -86,6 +104,17 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework/spring-context
     compileOnly("org.springframework:spring-context:${springContextVersion}")
+
+    compileOnly("io.papermc.paper:paper-api:${spigotApiVersion}")
+    compileOnly("net.md-5:bungeecord-api:${bungeecordApiVersion}")
+    compileOnly("com.velocitypowered:velocity-api:${velocityApiVersion}")
+    annotationProcessor("com.velocitypowered:velocity-api:${velocityApiVersion}")
+
+    // FastLogin API — compileOnly since FastLogin is a separate plugin at runtime
+    compileOnly("com.github.games647:fastlogin.core:${fastLoginVersion}")
+    compileOnly("com.github.games647:fastlogin.bukkit:${fastLoginVersion}")
+    compileOnly("com.github.games647:fastlogin.bungee:${fastLoginVersion}")
+    compileOnly("com.github.games647:fastlogin.velocity:${fastLoginVersion}")
 }
 
 tasks {
@@ -195,9 +224,13 @@ tasks.named("build") {
     }
 }
 
-tasks.named("processResources") {
+tasks.named<ProcessResources>("processResources") {
     if (!noui) {
         dependsOn("zipPluginUI")
+    }
+
+    filesMatching(listOf("plugin.yml", "bungee.yml", "velocity-plugin.json")) {
+        expand(mapOf("version" to version))
     }
 }
 
@@ -225,16 +258,16 @@ publishing {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11)) // Java 11 toolchain
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(21)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     }
 }

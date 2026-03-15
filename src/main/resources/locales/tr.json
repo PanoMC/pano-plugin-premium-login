@@ -1,3 +1,35 @@
 {
-  "hello-world": "Merhaba dünya!"
+  "account-type": {
+    "premium": "Premium",
+    "cracked": "Korsan",
+    "auto": "Otomatik"
+  },
+  "panel-edit": {
+    "title": "Kimlik Doğrulama Durumu",
+    "desc": "Bu oyuncunun premium (Mojang/Microsoft) veya korsan (çevrimdışı) hesap kullanıp kullanmadığını ayarlayın.",
+    "source-info": "Son güncelleyen: {source}"
+  },
+  "sidebar": {
+    "title": "Kimlik Doğrulama Durumu",
+    "source": "Kaynak: {source}"
+  },
+  "settings": {
+    "title": "Kimlik Doğrulama Durumu",
+    "desc": "Minecraft kimlik doğrulama türünüz. Hesabınıza uygun olarak değiştirebilirsiniz.",
+    "info": "'Otomatik' seçeneği, sunucunun giriş sırasında hesap türünüzü algılamasını sağlar.",
+    "save": "Kaydet",
+    "saved": "Kaydedildi!"
+  },
+  "profile-sidebar": {
+    "title": "Kimlik Doğrulama Durumu"
+  },
+  "permissions": {
+    "MANAGE_PREMIUM_STATUS": {
+      "title": "Premium Durumunu Yönet",
+      "description": "Oyuncu detay sayfasından oyuncunun kimlik doğrulama durumunu (Premium/Korsan) görüntüleyebilir ve değiştirebilir."
+    }
+  },
+  "activity-logs": {
+    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b>, <b>{targetUsername}</b> oyuncusunun kimlik doğrulama durumunu <b>{newAccountType}</b> olarak değiştirdi."
+  }
 }

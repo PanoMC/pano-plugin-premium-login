@@ -13,7 +13,5 @@ src/main/resources/plugin-ui
 
 src/main/resources/*.zip
 
-client
-server
 manifest.json
 bin
