@@ -6,30 +6,123 @@
   },
   "panel-edit": {
     "title": "Authentication Status",
-    "desc": "Set whether this player uses a premium (Mojang/Microsoft) or cracked (offline) account.",
+    "desc": "Premium or cracked account type.",
     "source-info": "Last updated by: {source}"
   },
   "sidebar": {
     "title": "Authentication Status",
-    "source": "Source: {source}"
+    "source": "Source: {source}",
+    "account-type": "Account Type",
+    "link-status": "Premium Link",
+    "linked": "Linked",
+    "not-linked": "Not Linked",
+    "unlink-button": "Unlink Premium",
+    "will-unlink": "Will be unlinked",
+    "undo": "Undo"
   },
   "settings": {
     "title": "Authentication Status",
-    "desc": "Your Minecraft authentication type. You can change this to match your account.",
-    "info": "Selecting 'Automatic' lets the server detect your account type on login.",
+    "desc": "Affects how you join the Minecraft server.",
+    "info-premium": "Auto-login with your Microsoft account. No password needed.",
+    "info-cracked": "You'll need to enter a password when joining the server.",
+    "info-auto": "The server will detect your account type automatically.",
     "save": "Save",
-    "saved": "Saved!"
+    "saved": "Saved!",
+    "link-title": "Link Premium Account",
+    "link-desc": "Verify your Minecraft account ownership to preserve your data when switching to premium.",
+    "link-button": "Link Account",
+    "linked": "Premium Minecraft account linked.",
+    "unlink-button": "Unlink"
   },
   "profile-sidebar": {
     "title": "Authentication Status"
+  },
+  "microsoft": {
+    "login-button": "Sign in with Minecraft Account",
+    "register-button": "Sign up with Minecraft Account",
+    "divider": "or",
+    "login-loading": "Connecting to Microsoft...",
+    "login-error": "Microsoft login failed. Please try again.",
+    "login-not-enabled": "Microsoft login is not enabled.",
+    "account-not-linked": "No Pano account is linked to this Minecraft account. Please register first.",
+    "account-already-linked": "A Pano account already exists with this Minecraft username.",
+    "verified": "Minecraft account verified: {username}",
+    "login-success": "Signed in with Minecraft premium account: {username}",
+    "link-success": "Premium account linked: {username}",
+    "redirecting": "Redirecting...",
+    "back-to-login": "Back to Login"
+  },
+  "plugin-settings": {
+    "title": "Microsoft Login Settings",
+    "setup-guide-title": "How to set up Microsoft Login",
+    "setup-step-1": "— click New registration.",
+    "setup-step-2": "Set a name for your app, select 'Personal Microsoft accounts only' as account type.",
+    "setup-step-3": "Under Redirect URI, select 'Web' and enter the Redirect URI shown below.",
+    "setup-step-4": "After registration, copy the Application (client) ID and paste it into the Client ID field.",
+    "setup-step-5": "Go to Certificates & Secrets → New client secret. Copy the secret value and paste it into the Client Secret field.",
+    "verification-notice": "Minecraft requires app verification to combat fraud and scams. Submit your app for verification at <a href=\"https://aka.ms/AppRegInfo\" target=\"_blank\" rel=\"noopener\">aka.ms/AppRegInfo</a> to allow all users to use this feature.",
+    "enabled": "Enable Microsoft Login",
+    "enabled-desc": "Allow users to sign in and register using their Microsoft/Minecraft account.",
+    "client-id": "Client ID",
+    "client-id-desc": "Application (client) ID from Azure Portal → Overview.",
+    "client-secret": "Client Secret",
+    "client-secret-desc": "Secret value from Azure Portal → Certificates & Secrets.",
+    "client-secret-new-placeholder": "Enter new client secret",
+    "reveal-desc": "Enter your password to view the client secret.",
+    "reveal-password-placeholder": "Your password",
+    "reveal-cancel": "Cancel",
+    "reveal-confirm": "Verify",
+    "redirect-uri": "Redirect URI",
+    "redirect-uri-desc": "Must match exactly with the URI registered in Azure AD.",
+    "redirect-uri-placeholder": "https://yoursite.com/api/premium-login/microsoft/callback",
+    "save-success": "Settings saved successfully!",
+    "save-error": "Failed to save settings.",
+    "debug-logging": "Debug Logging",
+    "debug-logging-desc": "Log detailed step-by-step information during Microsoft OAuth flows. Useful for troubleshooting."
   },
   "permissions": {
     "MANAGE_PREMIUM_STATUS": {
       "title": "Manage Premium Status",
       "description": "Can view and change player authentication status (Premium/Cracked) from the player detail page."
+    },
+    "MANAGE_PREMIUM_LOGIN_SETTINGS": {
+      "title": "Manage Premium Login Settings",
+      "description": "Can configure Microsoft OAuth settings for the Premium Login plugin."
     }
   },
   "activity-logs": {
-    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> changed the authentication status of player <b>{targetUsername}</b> to <b>{newAccountType}</b>."
+    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> changed the authentication status of player <b>{targetUsername}</b> to <b>{newAccountType}</b>.",
+    "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> updated the Premium Login plugin settings."
+  },
+  "mail": {
+    "username-change": {
+      "subject": "Your username has been changed on {websiteName}",
+      "title": "Username Change Required",
+      "hello": "Hello",
+      "body": "A Minecraft premium account has claimed the username you were using. Your username has been temporarily changed. Please set a new username by clicking the button below.",
+      "new-mc-username": "Minecraft username that claimed your name",
+      "button": "Set New Username",
+      "expiration-notice": "⏰ Expiration Notice",
+      "expiration-body": "This link will expire in 15 minutes. After that, you can log in with your email and password and set a new username.",
+      "alternative": "If you didn't expect this change, you can log in with your email and password. You will be prompted to set a new username.",
+      "footer": "If you have any questions, please contact our support team."
+    }
+  },
+  "set-username": {
+    "title": "Set Your Username",
+    "description": "A Minecraft premium account has claimed your username. Please choose a new username to continue.",
+    "input-label": "New Username",
+    "save": "Save",
+    "saving": "Saving",
+    "success": "Username updated successfully! You can now log in with your new username.",
+    "go-to-login": "Go to Login",
+    "error": {
+      "REGISTER_USERNAME_NOT_AVAILABLE": "This username is already taken. Please choose another one.",
+      "REGISTER_USERNAME_TOO_SHORT": "Username must be at least 3 characters.",
+      "REGISTER_USERNAME_TOO_LONG": "Username must be at most 16 characters.",
+      "REGISTER_INVALID_USERNAME": "Username can only contain letters, numbers and underscores.",
+      "INVALID_TOKEN": "Invalid or expired link. Please log in with your email to set a new username.",
+      "CONNECTION_ERROR": "Connection error. Please try again."
+    }
   }
 }

@@ -10,6 +10,8 @@ import com.panomc.plugins.premiumlogin.config.PremiumLoginConfig
 import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
 import com.panomc.plugins.premiumlogin.event.server.GetPlayerPremiumStatusEvent
 import com.panomc.plugins.premiumlogin.event.server.UpdatePlayerPremiumStatusEvent
+import com.panomc.plugins.premiumlogin.service.MicrosoftOAuthService
+import io.vertx.core.Vertx
 
 class PremiumLoginPlugin : PanoPlugin() {
     private val pluginDatabaseManager by lazy {
@@ -50,6 +52,11 @@ class PremiumLoginPlugin : PanoPlugin() {
 
         val configManager = PluginConfigManager(this, PremiumLoginConfig::class.java)
         pluginBeanContext.beanFactory.registerSingleton(PluginConfigManager::class.java.name, configManager)
+
+        // Register Microsoft OAuth service
+        val vertx = applicationContext.getBean(Vertx::class.java)
+        val oauthService = MicrosoftOAuthService(configManager, vertx)
+        pluginBeanContext.beanFactory.registerSingleton(MicrosoftOAuthService::class.java.name, oauthService)
 
         pluginDatabaseManager.initialize(this)
 

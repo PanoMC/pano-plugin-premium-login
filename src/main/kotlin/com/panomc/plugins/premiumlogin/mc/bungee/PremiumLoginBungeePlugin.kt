@@ -32,6 +32,10 @@ class PremiumLoginBungeePlugin : Plugin(), Listener {
 
         proxy.pluginManager.registerListener(this, this)
 
+        // Register FastLogin event listeners
+        proxy.pluginManager.registerListener(this, PremiumToggleListener(premiumStatusManager, logger))
+        proxy.pluginManager.registerListener(this, AutoLoginListener(premiumStatusManager, logger))
+
         logger.info("[PremiumLogin] BungeeCord plugin enabled!")
     }
 

@@ -1,12 +1,10 @@
 package com.panomc.plugins.premiumlogin.mc.spigot
 
 import com.github.games647.fastlogin.bukkit.FastLoginBukkit
-import com.github.games647.fastlogin.bukkit.event.BukkitFastLoginPreLoginEvent
 import com.panomc.plugins.pano.core.helper.PanoPluginMain
 import com.panomc.plugins.pano.core.platform.PlatformManager
 import com.panomc.plugins.premiumlogin.mc.core.FastLoginIntegration
 import com.panomc.plugins.premiumlogin.mc.core.PremiumStatusManager
-import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -22,6 +20,8 @@ class PremiumLoginSpigotPlugin : JavaPlugin(), Listener {
     private val fastLoginIntegration = FastLoginIntegration(logger)
 
     private var preLoginListener: PreLoginListener? = null
+    private var premiumToggleListener: PremiumToggleListener? = null
+    private var autoLoginListener: AutoLoginListener? = null
     private var connectionMonitorTaskId: Int = -1
     private var wasConnected = false
 
@@ -53,7 +53,7 @@ class PremiumLoginSpigotPlugin : JavaPlugin(), Listener {
 
     override fun onDisable() {
         stopConnectionMonitor()
-        unregisterPreLoginListener()
+        unregisterFastLoginListeners()
 
         if (::premiumStatusManager.isInitialized) {
             premiumStatusManager.clear()
@@ -63,7 +63,7 @@ class PremiumLoginSpigotPlugin : JavaPlugin(), Listener {
 
     /**
      * Monitor platform connection state every second.
-     * Registers PreLogin listener when connected, unregisters when disconnected.
+     * Registers FastLogin listeners when connected, unregisters when disconnected.
      */
     private fun startConnectionMonitor() {
         connectionMonitorTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, {
@@ -72,12 +72,12 @@ class PremiumLoginSpigotPlugin : JavaPlugin(), Listener {
                     platformManager.getWebSocket() != null
 
             if (isConnected && !wasConnected) {
-                // Just connected → register PreLogin listener
-                registerPreLoginListener()
+                // Just connected → register FastLogin listeners
+                registerFastLoginListeners()
                 wasConnected = true
             } else if (!isConnected && wasConnected) {
-                // Just disconnected → unregister PreLogin listener
-                unregisterPreLoginListener()
+                // Just disconnected → unregister FastLogin listeners
+                unregisterFastLoginListeners()
                 wasConnected = false
             }
         }, 20L, 20L) // Check every second (20 ticks)
@@ -90,20 +90,34 @@ class PremiumLoginSpigotPlugin : JavaPlugin(), Listener {
         }
     }
 
-    private fun registerPreLoginListener() {
+    private fun registerFastLoginListeners() {
         if (preLoginListener != null) return // Already registered
 
         preLoginListener = PreLoginListener(premiumStatusManager, fastLoginIntegration, logger)
+        premiumToggleListener = PremiumToggleListener(premiumStatusManager, logger)
+        autoLoginListener = AutoLoginListener(premiumStatusManager, logger)
+
         Bukkit.getPluginManager().registerEvents(preLoginListener!!, this)
-        logger.info("[PremiumLogin] Platform connected → PreLogin listener registered.")
+        Bukkit.getPluginManager().registerEvents(premiumToggleListener!!, this)
+        Bukkit.getPluginManager().registerEvents(autoLoginListener!!, this)
+
+        logger.info("[PremiumLogin] Platform connected → FastLogin listeners registered.")
     }
 
-    private fun unregisterPreLoginListener() {
+    private fun unregisterFastLoginListeners() {
         preLoginListener?.let {
             HandlerList.unregisterAll(it)
             preLoginListener = null
-            logger.info("[PremiumLogin] Platform disconnected → PreLogin listener unregistered.")
         }
+        premiumToggleListener?.let {
+            HandlerList.unregisterAll(it)
+            premiumToggleListener = null
+        }
+        autoLoginListener?.let {
+            HandlerList.unregisterAll(it)
+            autoLoginListener = null
+        }
+        logger.info("[PremiumLogin] Platform disconnected → FastLogin listeners unregistered.")
     }
 
     /**
@@ -137,68 +151,3 @@ class PremiumLoginSpigotPlugin : JavaPlugin(), Listener {
     }
 }
 
-/**
- * Separate listener for BukkitFastLoginPreLoginEvent.
- * Registered only when platform is connected, unregistered on disconnect.
- */
-class PreLoginListener(
-    private val premiumStatusManager: PremiumStatusManager,
-    private val fastLoginIntegration: FastLoginIntegration,
-    private val logger: java.util.logging.Logger
-) : Listener {
-
-    /**
-     * Intercepts FastLogin's pre-login event, which fires BEFORE FastLogin
-     * checks isOnlinemodePreferred() to decide premium vs cracked auth.
-     *
-     * This runs on ProtocolLib's async thread (LOGIN_START packet handler),
-     * so it's safe to do blocking calls here.
-     *
-     * Flow in JoinManagement.onLogin():
-     *   1. storage.loadProfile(username)     → loads profile into memory
-     *   2. callFastLoginPreLoginEvent(...)    → THIS LISTENER RUNS HERE
-     *   3. profile.isOnlinemodePreferred()   → reads OUR updated value
-     */
-    @EventHandler(priority = EventPriority.LOWEST)
-    fun onFastLoginPreLogin(event: BukkitFastLoginPreLoginEvent) {
-        val username = event.username
-        val profile = event.profile
-
-        logger.info("[PremiumLogin] Pre-login check for '$username' (current: ${if (profile.isOnlinemodePreferred) "PREMIUM" else "CRACKED"})")
-
-        try {
-            val panoStatus = runBlocking {
-                try {
-                    premiumStatusManager.queryPanoStatus(username)
-                } catch (e: Exception) {
-                    logger.warning("[PremiumLogin] Backend query failed for '$username': ${e.message}")
-                    null
-                }
-            }
-
-            if (panoStatus != null && panoStatus != "AUTO") {
-                val shouldBePremium = panoStatus == "PREMIUM"
-
-                if (shouldBePremium != profile.isOnlinemodePreferred) {
-                    profile.setOnlinemodePreferred(shouldBePremium)
-                    logger.info("[PremiumLogin] Pre-login: Updated profile for '$username' → $panoStatus (from Pano backend)")
-
-                    // Also persist to FastLogin DB for future logins
-                    if (fastLoginIntegration.isAvailable()) {
-                        if (shouldBePremium) {
-                            fastLoginIntegration.setPremiumStatus(username)
-                        } else {
-                            fastLoginIntegration.setCrackedStatus(username)
-                        }
-                    }
-                } else {
-                    logger.info("[PremiumLogin] Pre-login: '$username' already correct ($panoStatus)")
-                }
-            } else {
-                logger.info("[PremiumLogin] Pre-login: No definitive status from backend for '$username', using FastLogin default")
-            }
-        } catch (e: Exception) {
-            logger.warning("[PremiumLogin] Pre-login check failed for '$username': ${e.message}")
-        }
-    }
-}

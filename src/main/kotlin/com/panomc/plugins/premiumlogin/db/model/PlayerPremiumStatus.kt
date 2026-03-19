@@ -8,5 +8,6 @@ open class PlayerPremiumStatus(
     val playerName: String = "",
     val accountType: String = "AUTO",
     val source: String = "PANEL",
+    val premiumLinked: Boolean = false,
     val lastUpdated: Long = System.currentTimeMillis()
 ) : DBEntity()

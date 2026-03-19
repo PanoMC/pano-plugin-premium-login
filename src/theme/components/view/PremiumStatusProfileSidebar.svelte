@@ -53,6 +53,6 @@
 
   let { data } = $props();
 
-  let loading = $state(!data?.status);
-  let accountType = $state(data?.status?.accountType || 'AUTO');
+  let loading = $derived(!data?.status);
+  let accountType = $derived(data?.status?.accountType || 'AUTO');
 </script>

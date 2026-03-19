@@ -6,30 +6,123 @@
   },
   "panel-edit": {
     "title": "Статус аутентификации",
-    "desc": "Укажите, использует ли этот игрок премиум (Mojang/Microsoft) или пиратский (офлайн) аккаунт.",
+    "desc": "Тип аккаунта: премиум или пиратский.",
     "source-info": "Последнее обновление: {source}"
   },
   "sidebar": {
     "title": "Статус аутентификации",
-    "source": "Источник: {source}"
+    "source": "Источник: {source}",
+    "account-type": "Тип аккаунта",
+    "link-status": "Премиум привязка",
+    "linked": "Привязан",
+    "not-linked": "Не привязан",
+    "unlink-button": "Отвязать",
+    "will-unlink": "Будет отвязан",
+    "undo": "Отмена"
   },
   "settings": {
     "title": "Статус аутентификации",
-    "desc": "Ваш тип аутентификации Minecraft. Вы можете изменить его в соответствии с вашим аккаунтом.",
-    "info": "Выбор 'Автоматический' позволяет серверу определить тип вашего аккаунта при входе.",
+    "desc": "Влияет на способ входа на сервер Minecraft.",
+    "info-premium": "Автоматический вход через Microsoft. Пароль не требуется.",
+    "info-cracked": "Для входа на сервер потребуется пароль.",
+    "info-auto": "Сервер автоматически определит тип вашего аккаунта.",
     "save": "Сохранить",
-    "saved": "Сохранено!"
+    "saved": "Сохранено!",
+    "link-title": "Привязать премиум-аккаунт",
+    "link-desc": "Подтвердите владение Minecraft аккаунтом, чтобы сохранить данные при переходе на премиум.",
+    "link-button": "Привязать",
+    "linked": "Премиум-аккаунт Minecraft привязан.",
+    "unlink-button": "Отвязать"
   },
   "profile-sidebar": {
     "title": "Статус аутентификации"
+  },
+  "microsoft": {
+    "login-button": "Войти через аккаунт Minecraft",
+    "register-button": "Зарегистрироваться через аккаунт Minecraft",
+    "divider": "или",
+    "login-loading": "Подключение к Microsoft...",
+    "login-error": "Ошибка входа Microsoft. Пожалуйста, попробуйте снова.",
+    "login-not-enabled": "Вход через Microsoft не включён.",
+    "account-not-linked": "К этому аккаунту Minecraft не привязан аккаунт Pano. Пожалуйста, сначала зарегистрируйтесь.",
+    "account-already-linked": "Аккаунт Pano с таким именем пользователя Minecraft уже существует.",
+    "verified": "Аккаунт Minecraft подтверждён: {username}",
+    "login-success": "Выполнен вход с аккаунтом Minecraft premium: {username}",
+    "link-success": "Премиум-аккаунт привязан: {username}",
+    "redirecting": "Перенаправление...",
+    "back-to-login": "Вернуться к входу"
+  },
+  "plugin-settings": {
+    "title": "Настройки входа через Microsoft",
+    "setup-guide-title": "Как настроить вход через Microsoft",
+    "setup-step-1": "— нажмите Новая регистрация.",
+    "setup-step-2": "Укажите имя для приложения, выберите 'Только личные учётные записи Microsoft'.",
+    "setup-step-3": "В разделе URI перенаправления выберите 'Web' и введите URI перенаправления, указанный ниже.",
+    "setup-step-4": "После регистрации скопируйте Идентификатор приложения (клиента) и вставьте в поле Client ID.",
+    "setup-step-5": "Перейдите в Сертификаты и секреты → Новый секрет клиента. Скопируйте значение и вставьте в поле Client Secret.",
+    "verification-notice": "Minecraft требует верификацию приложения для борьбы с мошенничеством. Отправьте заявку на <a href=\"https://aka.ms/AppRegInfo\" target=\"_blank\" rel=\"noopener\">aka.ms/AppRegInfo</a>, чтобы все пользователи могли использовать эту функцию.",
+    "enabled": "Включить вход через Microsoft",
+    "enabled-desc": "Разрешить пользователям входить и регистрироваться с помощью аккаунта Microsoft/Minecraft.",
+    "client-id": "Идентификатор клиента (Client ID)",
+    "client-id-desc": "Идентификатор приложения из Azure Portal → Обзор.",
+    "client-secret": "Секретный ключ клиента (Client Secret)",
+    "client-secret-desc": "Значение секрета из Azure Portal → Сертификаты и секреты.",
+    "client-secret-new-placeholder": "Введите новый секретный ключ",
+    "reveal-desc": "Введите пароль, чтобы увидеть секретный ключ.",
+    "reveal-password-placeholder": "Ваш пароль",
+    "reveal-cancel": "Отмена",
+    "reveal-confirm": "Подтвердить",
+    "redirect-uri": "URI перенаправления",
+    "redirect-uri-desc": "Должен точно совпадать с URI, зарегистрированным в Azure AD.",
+    "redirect-uri-placeholder": "https://yoursite.com/api/premium-login/microsoft/callback",
+    "save-success": "Настройки успешно сохранены!",
+    "save-error": "Не удалось сохранить настройки.",
+    "debug-logging": "Отладочные логи",
+    "debug-logging-desc": "Подробное пошаговое логирование Microsoft OAuth. Полезно для устранения проблем."
   },
   "permissions": {
     "MANAGE_PREMIUM_STATUS": {
       "title": "Управление статусом премиум",
       "description": "Возможность просматривать и изменять статус аутентификации игрока (Премиум/Пиратский) на странице деталей игрока."
+    },
+    "MANAGE_PREMIUM_LOGIN_SETTINGS": {
+      "title": "Управление настройками Premium Login",
+      "description": "Возможность настраивать параметры Microsoft OAuth для плагина Premium Login."
     }
   },
   "activity-logs": {
-    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> изменил(а) статус аутентификации игрока <b>{targetUsername}</b> на <b>{newAccountType}</b>."
+    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> изменил(а) статус аутентификации игрока <b>{targetUsername}</b> на <b>{newAccountType}</b>.",
+    "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> обновил(а) настройки плагина Premium Login."
+  },
+  "mail": {
+    "username-change": {
+      "subject": "Ваше имя пользователя было изменено на {websiteName}",
+      "title": "Требуется изменение имени пользователя",
+      "hello": "Здравствуйте",
+      "body": "Учётная запись Minecraft Premium заняла ваше имя пользователя. Ваше имя было временно изменено. Пожалуйста, установите новое имя пользователя, нажав на кнопку ниже.",
+      "new-mc-username": "Minecraft-имя, занявшее ваше имя",
+      "button": "Установить новое имя",
+      "expiration-notice": "⏰ Уведомление об истечении срока",
+      "expiration-body": "Эта ссылка действительна в течение 15 минут. После этого вы можете войти с помощью email и пароля и установить новое имя пользователя.",
+      "alternative": "Если вы не ожидали этого изменения, вы можете войти с помощью email и пароля. Вам будет предложено установить новое имя пользователя.",
+      "footer": "Если у вас есть вопросы, пожалуйста, свяжитесь с нашей службой поддержки."
+    }
+  },
+  "set-username": {
+    "title": "Установите имя пользователя",
+    "description": "Учётная запись Minecraft Premium заняла ваше имя пользователя. Пожалуйста, выберите новое имя для продолжения.",
+    "input-label": "Новое имя пользователя",
+    "save": "Сохранить",
+    "saving": "Сохранение",
+    "success": "Имя пользователя успешно обновлено! Теперь вы можете войти с новым именем.",
+    "go-to-login": "Перейти к входу",
+    "error": {
+      "REGISTER_USERNAME_NOT_AVAILABLE": "Это имя пользователя уже занято. Пожалуйста, выберите другое.",
+      "REGISTER_USERNAME_TOO_SHORT": "Имя пользователя должно содержать не менее 3 символов.",
+      "REGISTER_USERNAME_TOO_LONG": "Имя пользователя должно содержать не более 16 символов.",
+      "REGISTER_INVALID_USERNAME": "Имя пользователя может содержать только буквы, цифры и подчёркивания.",
+      "INVALID_TOKEN": "Недействительная или просроченная ссылка. Войдите через email, чтобы установить новое имя.",
+      "CONNECTION_ERROR": "Ошибка соединения. Пожалуйста, попробуйте ещё раз."
+    }
   }
 }

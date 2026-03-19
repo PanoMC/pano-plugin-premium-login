@@ -83,7 +83,7 @@ dependencies {
     if (bootstrap) {
         compileOnly(project(mapOf("path" to ":Pano")))
     } else {
-        compileOnly("com.github.panomc:pano:v1.0.0-alpha.417")
+        compileOnly("com.github.panomc:pano:v1.0.0-alpha.419")
     }
 
     // pano-mc-plugin Core — provides PlatformManager, PlatformRequest, PlatformMessageResponse
@@ -95,6 +95,7 @@ dependencies {
     compileOnly("org.pf4j:pf4j:${pf4jVersion}")
     kapt("org.pf4j:pf4j:${pf4jVersion}")
     compileOnly("io.vertx:vertx-web:${vertxVersion}")
+    compileOnly("io.vertx:vertx-web-client:${vertxVersion}")
     compileOnly("io.vertx:vertx-lang-kotlin:${vertxVersion}")
     compileOnly("io.vertx:vertx-lang-kotlin-coroutines:${vertxVersion}")
     compileOnly("io.vertx:vertx-jdbc-client:${vertxVersion}")
@@ -149,8 +150,21 @@ tasks {
         }
     }
 
+    register("installEmailDeps", Exec::class) {
+        dependsOn("installBun")
+        workingDir("email")
+        commandLine(bunBin.absolutePath, "install")
+    }
+
+    register("buildEmails", Exec::class) {
+        dependsOn("installEmailDeps")
+        workingDir("email")
+        commandLine(bunBin.absolutePath, "run", "build:handlebars")
+    }
+
     register("buildUI", Exec::class) {
         dependsOn("installBun")
+        dependsOn("buildEmails")
         println(bunBin.absolutePath)
         commandLine(bunBin.absolutePath, "run", "build")
     }

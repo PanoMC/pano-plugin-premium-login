@@ -25,6 +25,7 @@ class PlayerPremiumStatusDaoImpl : PlayerPremiumStatusDao() {
                       `playerName` VARCHAR(64) NOT NULL,
                       `accountType` VARCHAR(16) NOT NULL DEFAULT 'AUTO',
                       `source` VARCHAR(16) NOT NULL DEFAULT 'PANEL',
+                      `premiumLinked` TINYINT(1) NOT NULL DEFAULT 0,
                       `lastUpdated` BIGINT(20) NOT NULL,
                       PRIMARY KEY (`id`),
                       UNIQUE KEY `unique_player_name` (`playerName`)
@@ -33,6 +34,16 @@ class PlayerPremiumStatusDaoImpl : PlayerPremiumStatusDao() {
             )
             .execute()
             .coAwait()
+
+        // Add premiumLinked column for existing tables
+        try {
+            sqlClient
+                .query("ALTER TABLE `${getTablePrefix() + tableName}` ADD COLUMN `premiumLinked` TINYINT(1) NOT NULL DEFAULT 0")
+                .execute()
+                .coAwait()
+        } catch (_: Exception) {
+            // Column already exists
+        }
     }
 
     override suspend fun getByPlayerName(playerName: String, sqlClient: SqlClient): PlayerPremiumStatus? {
@@ -51,12 +62,13 @@ class PlayerPremiumStatusDaoImpl : PlayerPremiumStatusDao() {
 
     override suspend fun upsertByPlayerName(status: PlayerPremiumStatus, sqlClient: SqlClient) {
         val query = """
-            INSERT INTO `${getTablePrefix() + tableName}` (`playerUuid`, `playerName`, `accountType`, `source`, `lastUpdated`)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO `${getTablePrefix() + tableName}` (`playerUuid`, `playerName`, `accountType`, `source`, `premiumLinked`, `lastUpdated`)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 `playerUuid` = VALUES(`playerUuid`),
                 `accountType` = VALUES(`accountType`),
                 `source` = VALUES(`source`),
+                `premiumLinked` = VALUES(`premiumLinked`),
                 `lastUpdated` = VALUES(`lastUpdated`)
         """.trimIndent()
         sqlClient.preparedQuery(query)
@@ -66,6 +78,7 @@ class PlayerPremiumStatusDaoImpl : PlayerPremiumStatusDao() {
                     status.playerName,
                     status.accountType,
                     status.source,
+                    if (status.premiumLinked) 1 else 0,
                     status.lastUpdated
                 )
             )

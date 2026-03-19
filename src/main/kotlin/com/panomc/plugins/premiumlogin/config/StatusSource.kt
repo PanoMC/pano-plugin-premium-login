@@ -4,5 +4,6 @@ enum class StatusSource {
     PANEL,
     SERVER,
     FASTLOGIN,
-    USER
+    USER,
+    MICROSOFT
 }

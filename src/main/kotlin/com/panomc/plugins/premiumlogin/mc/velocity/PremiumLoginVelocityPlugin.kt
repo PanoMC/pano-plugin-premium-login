@@ -48,6 +48,10 @@ class PremiumLoginVelocityPlugin {
 
         premiumStatusManager = PremiumStatusManager(platformManager, logger, fastLoginIntegration)
 
+        // Register FastLogin event listeners
+        server.eventManager.register(this, PremiumToggleListener(premiumStatusManager, logger))
+        server.eventManager.register(this, AutoLoginListener(premiumStatusManager, logger))
+
         logger.info("[PremiumLogin] Velocity plugin enabled!")
     }
 

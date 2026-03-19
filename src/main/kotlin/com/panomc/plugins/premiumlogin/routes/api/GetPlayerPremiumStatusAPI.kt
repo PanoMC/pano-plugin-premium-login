@@ -40,6 +40,7 @@ class GetPlayerPremiumStatusAPI(
                 .put("lastUpdated", status.lastUpdated)
                 .put("playerUuid", status.playerUuid)
                 .put("playerName", status.playerName)
+                .put("premiumLinked", status.premiumLinked)
         } else {
             JsonObject()
                 .put("accountType", AccountType.AUTO.name)
@@ -47,6 +48,7 @@ class GetPlayerPremiumStatusAPI(
                 .put("lastUpdated", 0L)
                 .put("playerUuid", "")
                 .put("playerName", username)
+                .put("premiumLinked", false)
         }
 
         return Successful(result.map)

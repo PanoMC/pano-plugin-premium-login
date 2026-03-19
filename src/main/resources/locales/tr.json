@@ -6,30 +6,123 @@
   },
   "panel-edit": {
     "title": "Kimlik Doğrulama Durumu",
-    "desc": "Bu oyuncunun premium (Mojang/Microsoft) veya korsan (çevrimdışı) hesap kullanıp kullanmadığını ayarlayın.",
+    "desc": "Premium veya korsan hesap türü.",
     "source-info": "Son güncelleyen: {source}"
   },
   "sidebar": {
     "title": "Kimlik Doğrulama Durumu",
-    "source": "Kaynak: {source}"
+    "source": "Kaynak: {source}",
+    "account-type": "Hesap Türü",
+    "link-status": "Premium Bağlantı",
+    "linked": "Bağlı",
+    "not-linked": "Bağlı Değil",
+    "unlink-button": "Bağlantıyı Kes",
+    "will-unlink": "Bağlantı kesilecek",
+    "undo": "Geri Al"
   },
   "settings": {
     "title": "Kimlik Doğrulama Durumu",
-    "desc": "Minecraft kimlik doğrulama türünüz. Hesabınıza uygun olarak değiştirebilirsiniz.",
-    "info": "'Otomatik' seçeneği, sunucunun giriş sırasında hesap türünüzü algılamasını sağlar.",
+    "desc": "Minecraft sunucusuna giriş şeklinizi belirler.",
+    "info-premium": "Microsoft hesabınızla otomatik giriş yaparsınız. Şifre gerekmez.",
+    "info-cracked": "Sunucuya girerken şifre girmeniz gerekecek.",
+    "info-auto": "Sunucu hesap türünüzü otomatik olarak algılar.",
     "save": "Kaydet",
-    "saved": "Kaydedildi!"
+    "saved": "Kaydedildi!",
+    "link-title": "Premium Hesap Bağla",
+    "link-desc": "Premium'a geçerken verilerinizi korumak için Minecraft hesabınızı doğrulayın.",
+    "link-button": "Hesap Bağla",
+    "linked": "Premium Minecraft hesabı bağlandı.",
+    "unlink-button": "Bağlantıyı Kes"
   },
   "profile-sidebar": {
     "title": "Kimlik Doğrulama Durumu"
+  },
+  "microsoft": {
+    "login-button": "Minecraft Hesabıyla Giriş Yap",
+    "register-button": "Minecraft Hesabıyla Kayıt Ol",
+    "divider": "veya",
+    "login-loading": "Microsoft'a bağlanılıyor...",
+    "login-error": "Microsoft girişi başarısız oldu. Lütfen tekrar deneyin.",
+    "login-not-enabled": "Microsoft girişi etkinleştirilmemiş.",
+    "account-not-linked": "Bu Minecraft hesabına bağlı bir Pano hesabı bulunamadı. Lütfen önce kayıt olun.",
+    "account-already-linked": "Bu Minecraft kullanıcı adıyla zaten bir Pano hesabı mevcut.",
+    "verified": "Minecraft hesabı doğrulandı: {username}",
+    "login-success": "Minecraft premium hesabıyla giriş yapıldı: {username}",
+    "link-success": "Premium hesap bağlandı: {username}",
+    "redirecting": "Yönlendiriliyorsunuz...",
+    "back-to-login": "Giriş Sayfasına Dön"
+  },
+  "plugin-settings": {
+    "title": "Microsoft Giriş Ayarları",
+    "setup-guide-title": "Microsoft Girişi nasıl kurulur",
+    "setup-step-1": "— Yeni kayıt'a tıklayın.",
+    "setup-step-2": "Uygulamanız için bir ad belirleyin, hesap türü olarak 'Yalnızca kişisel Microsoft hesapları' seçin.",
+    "setup-step-3": "Yönlendirme URI'si altında 'Web' seçin ve aşağıda gösterilen Yönlendirme URI'sini girin.",
+    "setup-step-4": "Kayıttan sonra Uygulama (istemci) kimliğini kopyalayıp Client ID alanına yapıştırın.",
+    "setup-step-5": "Sertifikalar ve Gizli Anahtarlar → Yeni gizli anahtar oluşturun. Değeri kopyalayıp Client Secret alanına yapıştırın.",
+    "verification-notice": "Minecraft, dolandırıcılık ve sahtecilikle mücadele için uygulama doğrulaması gerektiriyor. Tüm kullanıcıların bu özelliği kullanabilmesi için uygulamanızı <a href=\"https://aka.ms/AppRegInfo\" target=\"_blank\" rel=\"noopener\">aka.ms/AppRegInfo</a> adresinden doğrulamaya gönderin.",
+    "enabled": "Microsoft Girişini Etkinleştir",
+    "enabled-desc": "Kullanıcıların Microsoft/Minecraft hesaplarıyla giriş yapmasına ve kayıt olmasına izin verin.",
+    "client-id": "İstemci Kimliği (Client ID)",
+    "client-id-desc": "Azure Portal → Genel Bakış'tan Uygulama (istemci) kimliği.",
+    "client-secret": "İstemci Gizli Anahtarı (Client Secret)",
+    "client-secret-desc": "Azure Portal → Sertifikalar ve Gizli Anahtarlar'dan gizli anahtar değeri.",
+    "client-secret-new-placeholder": "Yeni gizli anahtar girin",
+    "reveal-desc": "Gizli anahtarı görmek için şifrenizi girin.",
+    "reveal-password-placeholder": "Şifreniz",
+    "reveal-cancel": "İptal",
+    "reveal-confirm": "Doğrula",
+    "redirect-uri": "Yönlendirme URI'si",
+    "redirect-uri-desc": "Azure AD'de kayıtlı URI ile tam olarak eşleşmelidir.",
+    "redirect-uri-placeholder": "https://siteniz.com/api/premium-login/microsoft/callback",
+    "save-success": "Ayarlar başarıyla kaydedildi!",
+    "save-error": "Ayarlar kaydedilemedi.",
+    "debug-logging": "Hata Ayıklama Logları",
+    "debug-logging-desc": "Microsoft OAuth işlemlerinde adım adım detaylı log bilgisi yazar. Sorun giderme için kullanışlıdır."
   },
   "permissions": {
     "MANAGE_PREMIUM_STATUS": {
       "title": "Premium Durumunu Yönet",
       "description": "Oyuncu detay sayfasından oyuncunun kimlik doğrulama durumunu (Premium/Korsan) görüntüleyebilir ve değiştirebilir."
+    },
+    "MANAGE_PREMIUM_LOGIN_SETTINGS": {
+      "title": "Premium Giriş Ayarlarını Yönet",
+      "description": "Premium Login eklentisi için Microsoft OAuth ayarlarını yapılandırabilir."
     }
   },
   "activity-logs": {
-    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b>, <b>{targetUsername}</b> oyuncusunun kimlik doğrulama durumunu <b>{newAccountType}</b> olarak değiştirdi."
+    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b>, <b>{targetUsername}</b> oyuncusunun kimlik doğrulama durumunu <b>{newAccountType}</b> olarak değiştirdi.",
+    "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> Premium Login eklenti ayarlarını güncelledi."
+  },
+  "mail": {
+    "username-change": {
+      "subject": "{websiteName} üzerinde kullanıcı adınız değiştirildi",
+      "title": "Kullanıcı Adı Değişikliği Gerekli",
+      "hello": "Merhaba",
+      "body": "Bir Minecraft premium hesabı, kullandığınız kullanıcı adını talep etti. Kullanıcı adınız geçici olarak değiştirildi. Lütfen aşağıdaki butona tıklayarak yeni bir kullanıcı adı belirleyin.",
+      "new-mc-username": "Adınızı talep eden Minecraft kullanıcı adı",
+      "button": "Yeni Kullanıcı Adı Belirle",
+      "expiration-notice": "⏰ Süre Uyarısı",
+      "expiration-body": "Bu link 15 dakika içinde geçersiz olacaktır. Süre dolduktan sonra e-posta ve şifrenizle giriş yapıp yeni kullanıcı adı belirleyebilirsiniz.",
+      "alternative": "Bu değişikliği beklemiyorsanız, e-posta ve şifrenizle giriş yapabilirsiniz. Yeni bir kullanıcı adı belirlemeniz istenecektir.",
+      "footer": "Sorularınız varsa lütfen destek ekibimizle iletişime geçin."
+    }
+  },
+  "set-username": {
+    "title": "Kullanıcı Adı Belirle",
+    "description": "Bir Minecraft premium hesabı kullanıcı adınızı talep ettiği için adınız değiştirildi. Devam etmek için lütfen yeni bir kullanıcı adı seçin.",
+    "input-label": "Yeni Kullanıcı Adı",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor",
+    "success": "Kullanıcı adı başarıyla güncellendi! Artık yeni kullanıcı adınızla giriş yapabilirsiniz.",
+    "go-to-login": "Giriş Sayfasına Git",
+    "error": {
+      "REGISTER_USERNAME_NOT_AVAILABLE": "Bu kullanıcı adı zaten kullanılıyor. Lütfen başka bir ad seçin.",
+      "REGISTER_USERNAME_TOO_SHORT": "Kullanıcı adı en az 3 karakter olmalıdır.",
+      "REGISTER_USERNAME_TOO_LONG": "Kullanıcı adı en fazla 16 karakter olmalıdır.",
+      "REGISTER_INVALID_USERNAME": "Kullanıcı adı yalnızca harf, rakam ve alt çizgi içerebilir.",
+      "INVALID_TOKEN": "Geçersiz veya süresi dolmuş bağlantı. Yeni kullanıcı adı belirlemek için e-postanızla giriş yapın.",
+      "CONNECTION_ERROR": "Bağlantı hatası. Lütfen tekrar deneyin."
+    }
   }
 }

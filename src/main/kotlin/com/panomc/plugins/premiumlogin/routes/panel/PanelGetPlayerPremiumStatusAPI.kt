@@ -48,12 +48,14 @@ class PanelGetPlayerPremiumStatusAPI(
                 .put("source", status.source)
                 .put("lastUpdated", status.lastUpdated)
                 .put("playerUuid", status.playerUuid)
+                .put("premiumLinked", status.premiumLinked)
         } else {
             JsonObject()
                 .put("accountType", AccountType.AUTO.name)
                 .put("source", "")
                 .put("lastUpdated", 0L)
                 .put("playerUuid", "")
+                .put("premiumLinked", false)
         }
 
         return Successful(result.map)
