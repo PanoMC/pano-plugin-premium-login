@@ -1,5 +1,5 @@
 import {PanoPlugin, viewComponent} from '@panomc/sdk';
-import {derived, writable} from 'svelte/store';
+import {derived, get, writable} from 'svelte/store';
 import {_ as i18n} from '@panomc/sdk/utils/language';
 import ApiUtil from '@panomc/sdk/utils/api';
 
@@ -138,18 +138,20 @@ export default class PremiumLoginPlugin extends PanoPlugin {
         }
 
         await loadMicrosoftConfig(event);
-      });
 
-      // Register Microsoft login button as alternative login method
-      pano.ui.auth.login.alternativeMethods.add({
-        id: `${pluginId}-microsoft-login`,
-        component: viewComponent(
-          () =>
-            import(
-              './theme/components/view/MicrosoftLoginButton.svelte'
+        // Register Microsoft login button only if Microsoft login is enabled
+        if (get(microsoftLoginEnabled)) {
+          pano.ui.auth.login.alternativeMethods.add({
+            id: `${pluginId}-microsoft-login`,
+            component: viewComponent(
+              () =>
+                import(
+                  './theme/components/view/MicrosoftLoginButton.svelte'
+                ),
             ),
-        ),
-        priority: 50,
+            priority: 50,
+          });
+        }
       });
 
       // Inject Microsoft callback errors and username into register page & load config
@@ -166,18 +168,20 @@ export default class PremiumLoginPlugin extends PanoPlugin {
         }
 
         await loadMicrosoftConfig(event);
-      });
 
-      // Register Microsoft register button as alternative register method
-      pano.ui.auth.register.alternativeMethods.add({
-        id: `${pluginId}-microsoft-register`,
-        component: viewComponent(
-          () =>
-            import(
-              './theme/components/view/MicrosoftRegisterButton.svelte'
+        // Register Microsoft register button only if Microsoft login is enabled
+        if (get(microsoftLoginEnabled)) {
+          pano.ui.auth.register.alternativeMethods.add({
+            id: `${pluginId}-microsoft-register`,
+            component: viewComponent(
+              () =>
+                import(
+                  './theme/components/view/MicrosoftRegisterButton.svelte'
+                ),
             ),
-        ),
-        priority: 50,
+            priority: 50,
+          });
+        }
       });
     }
   }
