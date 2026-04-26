@@ -78,9 +78,20 @@
   let premiumLinked = false;
   let pendingUnlink = false;
 
-  loadData();
+  /** Edit modal reuses the same card row instance for every player; reload when the user changes. */
+  let lastLoadedUsername = null;
+
+  $: if (playerData?.username) {
+    if (playerData.username !== lastLoadedUsername) {
+      lastLoadedUsername = playerData.username;
+      pendingUnlink = false;
+      loadData();
+    }
+  }
 
   async function loadData() {
+    if (!playerData?.username) return;
+    loading = true;
     try {
       const res = await ApiUtil.get({
         path: `/api/panel/premium-login/player/${playerData?.username}`,
