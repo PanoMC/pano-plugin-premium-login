@@ -1,3 +1,38 @@
+<script module>
+  /**
+   * Called from panel `executeHookLoad` during layout `load` so `request: event` is used
+   * (CSRF, cookies, `event.fetch`). See panel-ui api.util.
+   * (ApiUtil is only imported in the instance script; same-name imports in both scripts error in Svelte 5.)
+   * @param {import('@sveltejs/kit').LayoutLoadEvent} event
+   */
+  export async function load(event) {
+    const { default: ApiUtil } = await import('@panomc/sdk/utils/api');
+    const username = event.params?.username;
+    if (!username || typeof username !== 'string') {
+      return {};
+    }
+    try {
+      const res = await ApiUtil.get({
+        path: `/api/panel/premium-login/player/${encodeURIComponent(username)}`,
+        request: event,
+      });
+      if (res && !res.error) {
+        return {
+          premiumPreload: {
+            _ok: true,
+            accountType: res.accountType || 'AUTO',
+            source: res.source || '',
+            premiumLinked: !!res.premiumLinked,
+          },
+        };
+      }
+    } catch (e) {
+      console.error('[pano-plugin-premium-login] premium sidebar load() failed', e);
+    }
+    return {};
+  }
+</script>
+
 <div class="card mt-3 animate__animated animate__fadeIn">
   <div class="card-header d-flex align-items-center gap-2">
     <i class="fas fa-shield-alt text-secondary"></i>
@@ -42,19 +77,35 @@
 </div>
 
 <script>
-    import {_} from '../../../main.js';
-    import ApiUtil from '@panomc/sdk/utils/api';
+  import { _ } from '../../../main.js';
+  import ApiUtil from '@panomc/sdk/utils/api';
 
-    export let playerData;
+  export let playerData;
+
+  /** @type {{ _ok: true, accountType: string, source: string, premiumLinked: boolean } | undefined} */
+  export let premiumPreload = undefined;
 
   let loading = true;
   let accountType = 'AUTO';
   let source = '';
   let premiumLinked = false;
 
-  loadData();
+  let lastFetchedUsername = null;
+
+  $: if (premiumPreload?._ok) {
+    accountType = premiumPreload.accountType;
+    source = premiumPreload.source;
+    premiumLinked = premiumPreload.premiumLinked;
+    loading = false;
+    lastFetchedUsername = playerData?.username ?? null;
+  } else if (playerData?.username && playerData.username !== lastFetchedUsername) {
+    lastFetchedUsername = playerData.username;
+    loadData();
+  }
 
   async function loadData() {
+    if (!playerData?.username) return;
+    loading = true;
     try {
       const res = await ApiUtil.get({
         path: `/api/panel/premium-login/player/${playerData?.username}`,
