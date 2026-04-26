@@ -83,7 +83,7 @@ dependencies {
     if (bootstrap) {
         compileOnly(project(mapOf("path" to ":Pano")))
     } else {
-        compileOnly("com.github.panomc:pano:v1.0.0-alpha.419")
+        compileOnly("com.github.panomc:pano:v1.0.0-alpha.441")
     }
 
     // pano-mc-plugin Core — provides PlatformManager, PlatformRequest, PlatformMessageResponse

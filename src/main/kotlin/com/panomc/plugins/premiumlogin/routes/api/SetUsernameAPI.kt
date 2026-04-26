@@ -5,7 +5,7 @@ import com.panomc.platform.db.DatabaseManager
 import com.panomc.platform.error.*
 import com.panomc.platform.model.*
 import com.panomc.platform.token.TokenProvider
-import com.panomc.platform.token.TokenType
+import com.panomc.platform.token.SetUsernameTokenType
 import com.panomc.platform.util.Regexes
 import com.panomc.plugins.premiumlogin.PremiumLoginPlugin
 import io.vertx.ext.web.RoutingContext
@@ -52,7 +52,7 @@ class SetUsernameAPI(
         val sqlClient = getSqlClient()
 
         // Validate the SET_USERNAME token
-        if (!tokenProvider.isTokenValid(token, TokenType.SET_USERNAME, sqlClient)) {
+        if (!tokenProvider.isTokenValid(token, SetUsernameTokenType, sqlClient)) {
             throw InvalidToken()
         }
 

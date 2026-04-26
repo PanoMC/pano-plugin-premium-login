@@ -8,7 +8,7 @@ import com.panomc.platform.db.DatabaseManager
 import com.panomc.platform.mail.MailManager
 import com.panomc.platform.model.*
 import com.panomc.platform.token.TokenProvider
-import com.panomc.platform.token.TokenType
+import com.panomc.platform.token.SetUsernameTokenType
 import com.panomc.plugins.premiumlogin.PremiumLoginPlugin
 import com.panomc.plugins.premiumlogin.config.AccountType
 import com.panomc.plugins.premiumlogin.config.PremiumLoginConfig
@@ -234,17 +234,17 @@ class MicrosoftProcessAPI(
 
             tokenProvider.invalidateTokensBySubjectAndType(
                 existingUser.id.toString(),
-                TokenType.SET_USERNAME,
+                SetUsernameTokenType,
                 sqlClient
             )
             val (token, expireDate) = tokenProvider.generateToken(
                 existingUser.id.toString(),
-                TokenType.SET_USERNAME
+                SetUsernameTokenType
             )
             tokenProvider.saveToken(
                 token,
                 existingUser.id.toString(),
-                TokenType.SET_USERNAME,
+                SetUsernameTokenType,
                 expireDate,
                 sqlClient
             )
