@@ -1,0 +1,94 @@
+buildscript {
+    repositories { mavenCentral() }
+    dependencies {
+        classpath 'com.guardsquare:proguard-gradle:7.7.0'
+    }
+}
+
+import proguard.gradle.ProGuardTask
+
+if (project.findProperty("skipProguard")?.toString()?.toBoolean() == true) {
+    logger.lifecycle("${project.path}: ProGuard skipped (-PskipProguard)")
+} else {
+    def rulesFile = layout.projectDirectory.file("proguard-rules-premium.pro").asFile
+    if (!rulesFile.exists()) {
+        throw new GradleException("Missing ${rulesFile.absolutePath}")
+    }
+
+    def pluginIdProp = project.findProperty("pluginId") as String
+    def ver = project.version.toString()
+    def shadowOutDir = layout.buildDirectory.dir("intermediates/shadow")
+    def shadowDirFile = shadowOutDir.get().asFile
+    def shadowJarFile = new File(shadowDirFile, "${pluginIdProp}-${ver}-shadow.jar")
+    def libsDir = new File(layout.buildDirectory.get().asFile, "libs")
+    def releaseJarFile = new File(libsDir, "${pluginIdProp}-${ver}.jar")
+
+    tasks.named("shadowJar").configure {
+        destinationDirectory.set(shadowOutDir)
+        archiveFileName.set("${pluginIdProp}-${ver}-shadow.jar")
+    }
+
+    def obfuscate = tasks.register("obfuscateReleaseJar", ProGuardTask) {
+        dependsOn tasks.named("shadowJar")
+        verbose()
+
+        doFirst {
+            releaseJarFile.parentFile.mkdirs()
+            layout.buildDirectory.dir("outputs/proguard").get().asFile.mkdirs()
+        }
+
+        injars(shadowJarFile)
+        outjars(releaseJarFile)
+
+        def javaHome = project.file(System.getProperty("java.home"))
+        def jmods = new File(javaHome, "jmods")
+        if (jmods.directory) {
+            def filter = [
+                jarfilter: '!**.jar;**',
+                modulefilter: '!module-info.class'
+            ]
+            libraryjars(filter, new File(jmods, "java.base.jmod"))
+            ["java.logging.jmod", "java.xml.jmod", "java.sql.jmod", "jdk.unsupported.jmod"].each { name ->
+                def mod = new File(jmods, name)
+                if (mod.file) {
+                    libraryjars(filter, mod)
+                }
+            }
+        } else {
+            libraryjars(fileTree(new File(javaHome, "lib")) {
+                include("**/*.jar")
+            })
+        }
+
+        libraryjars(configurations.named("compileClasspath").get().filter {
+            it.name.toLowerCase().endsWith(".jar") && it.file
+        })
+
+        configuration(rulesFile)
+        printmapping(layout.buildDirectory.file("outputs/proguard/mapping.txt").get().asFile)
+    }
+
+    tasks.named("copyJar").configure {
+        dependsOn obfuscate
+        actions.clear()
+        doLast {
+            def dir = null
+            if (rootProject.extensions.extraProperties.has("pluginsDir")) {
+                dir = rootProject.extensions.extraProperties.get("pluginsDir") as File
+            }
+            if (dir == null) return
+            project.copy {
+                from releaseJarFile
+                into dir
+            }
+        }
+    }
+
+    tasks.named("jar").configure {
+        setDependsOn([obfuscate.get(), tasks.named("copyJar").get()])
+    }
+
+    tasks.named("build").configure {
+        dependsOn obfuscate
+    }
+}
