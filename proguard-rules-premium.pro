@@ -9,8 +9,10 @@
 
 -keepnames class * extends com.panomc.platform.api.PanoPlugin
 
+# Keep lifecycle methods on concrete plugins (not just <init>). Obfuscating Kotlin
+# suspend overrides here can break StackMapTable verification at onStart().
 -keep class * extends com.panomc.platform.api.PanoPlugin {
-    public <init>();
+    *;
 }
 
 -keep @org.pf4j.Extension class * {
