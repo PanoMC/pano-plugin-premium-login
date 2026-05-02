@@ -1,8 +1,10 @@
 # ProGuard — premium plugin (per-repo). Same file ships in each standalone plugin repository.
+#
+# Do not use -dontpreverify: Kotlin coroutines need valid StackMapTable for JVM bytecode
+# verification (otherwise java.lang.VerifyError at runtime).
 
 -dontshrink
 -dontoptimize
--dontpreverify
 -ignorewarnings
 
 -keepnames class * extends com.panomc.platform.api.PanoPlugin
@@ -18,7 +20,7 @@
 
 -keepnames @com.panomc.platform.annotation.Endpoint class *
 
--keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod,Exceptions
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod,Exceptions,StackMapTable,BootstrapMethods,NestMembers,NestHost
 
 -keepclassmembers class * {
     @org.springframework.context.annotation.** *;
