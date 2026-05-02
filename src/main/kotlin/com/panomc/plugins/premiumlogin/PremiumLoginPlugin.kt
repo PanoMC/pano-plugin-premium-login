@@ -54,6 +54,10 @@ class PremiumLoginPlugin : PanoPlugin() {
         startPlugin()
     }
 
+    override suspend fun verifyLicense() {
+        licenseClient.requireValidLicense()
+    }
+
     internal suspend fun startPlugin() {
         if (isInitialized) return
         isInitialized = true
