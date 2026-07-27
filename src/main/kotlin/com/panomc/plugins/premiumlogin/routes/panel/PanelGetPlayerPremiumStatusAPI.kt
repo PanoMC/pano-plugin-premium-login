@@ -4,7 +4,6 @@ import com.panomc.platform.annotation.Endpoint
 import com.panomc.platform.db.DatabaseManager
 import com.panomc.platform.error.NotFound
 import com.panomc.platform.model.*
-import com.panomc.plugins.license.LicenseGuard
 import com.panomc.plugins.premiumlogin.PremiumLoginPlugin
 import com.panomc.plugins.premiumlogin.config.AccountType
 import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
@@ -33,9 +32,6 @@ class PanelGetPlayerPremiumStatusAPI(
             .build()
 
     override suspend fun handle(context: RoutingContext): Result {
-        // Anti-tamper: re-assert license at a critical read path.
-        LicenseGuard.assert(plugin)
-
         val parameters = getParameters(context)
         val username = parameters.pathParameter("username").string
 

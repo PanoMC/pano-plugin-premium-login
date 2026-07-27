@@ -6,7 +6,6 @@ import com.panomc.platform.api.config.PluginConfigManager
 import com.panomc.platform.db.DatabaseManager
 import com.panomc.platform.server.ServerManager
 import com.panomc.platform.setup.SetupManager
-import com.panomc.plugins.license.PluginLicenseClient
 import com.panomc.plugins.premiumlogin.config.PremiumLoginConfig
 import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
 import com.panomc.plugins.premiumlogin.event.server.GetPlayerPremiumStatusEvent
@@ -15,13 +14,6 @@ import com.panomc.plugins.premiumlogin.service.MicrosoftOAuthService
 import io.vertx.core.Vertx
 
 class PremiumLoginPlugin : PanoPlugin() {
-    /**
-     * Premium plugin: enforce a panomc.com license at startup. When the build is
-     * configured as free (panoLicensePublicKey empty in gradle.properties) this is a
-     * no-op, so the same code path stays valid for development and free distribution.
-     */
-    private val licenseClient by lazy { PluginLicenseClient(this) }
-
     private val pluginDatabaseManager by lazy {
         applicationContext.getBean(PluginDatabaseManager::class.java)
     }
@@ -44,18 +36,9 @@ class PremiumLoginPlugin : PanoPlugin() {
     private lateinit var updatePlayerPremiumStatusEvent: UpdatePlayerPremiumStatusEvent
 
     override suspend fun onStart() {
-        // Verify license BEFORE doing any startup work. If invalid, this throws
-        // LicenseRequiredException, PF4J marks the plugin failed, and the host
-        // records the failure for the panel UI. Pano core itself keeps running.
-        licenseClient.requireValidLicense()
-
         logger.info("Starting...")
 
         startPlugin()
-    }
-
-    override suspend fun verifyLicense() {
-        licenseClient.requireValidLicense()
     }
 
     internal suspend fun startPlugin() {
