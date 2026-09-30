@@ -50,7 +50,8 @@
     "login-success": "Signed in with Minecraft premium account: {username}",
     "link-success": "Premium account linked: {username}",
     "redirecting": "Redirecting...",
-    "back-to-login": "Back to Login"
+    "back-to-login": "Back to Login",
+    "no-panel-access": "This account has no access to the management panel."
   },
   "plugin-settings": {
     "title": "Microsoft Login Settings",

@@ -30,7 +30,7 @@
         <div class="alert alert-success py-2 text-center" role="alert">
           {$_('set-username.success')}
         </div>
-        <a href="/login" class="btn btn-secondary w-100 mt-2">
+        <a href={pano?.isPanel ? '/panel/login' : '/login'} class="btn btn-secondary w-100 mt-2">
           {$_('set-username.go-to-login')}
         </a>
       {:else}
@@ -66,7 +66,7 @@
 </div>
 
 <script>
-    import {_} from '../../main.js';
+    import {_, pano} from '../../main.js';
     import {onMount} from 'svelte';
     import ApiUtil from '@panomc/sdk/utils/api';
 

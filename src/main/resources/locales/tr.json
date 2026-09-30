@@ -50,7 +50,8 @@
     "login-success": "Minecraft premium hesabıyla giriş yapıldı: {username}",
     "link-success": "Premium hesap bağlandı: {username}",
     "redirecting": "Yönlendiriliyorsunuz...",
-    "back-to-login": "Giriş Sayfasına Dön"
+    "back-to-login": "Giriş Sayfasına Dön",
+    "no-panel-access": "Bu hesabın yönetim paneline erişimi yok."
   },
   "plugin-settings": {
     "title": "Microsoft Giriş Ayarları",

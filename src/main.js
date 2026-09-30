@@ -44,6 +44,58 @@ async function loadMicrosoftConfig(event) {
   }
 }
 
+/**
+ * The Microsoft button and `?mcError=` on a login form. Shared by the theme's `/login` and the
+ * panel's own sign-in page (a SERVERS install runs no theme), which expose the same
+ * `pano.ui.auth.login` surface.
+ */
+function registerLoginContent(pano) {
+  pano.ui.auth.login.onLoad(async (data, event) => {
+    const url = new URL(event.url);
+    const mcError = url.searchParams.get('mcError');
+    if (mcError) {
+      data.error = mcError;
+    }
+
+    await loadMicrosoftConfig(event);
+
+    // Register Microsoft login button only if Microsoft login is enabled
+    if (get(microsoftLoginEnabled)) {
+      pano.ui.auth.login.alternativeMethods.add({
+        id: `${pluginId}-microsoft-login`,
+        component: viewComponent(
+          () =>
+            import(
+              './theme/components/view/MicrosoftLoginButton.svelte'
+            ),
+        ),
+        priority: 50,
+      });
+    }
+  });
+}
+
+/** The pages the Microsoft round trip and the username-recovery mail land on. */
+function registerSignInPages(pano, options = {}) {
+  // Register set-username page (for temp-user username recovery via email link)
+  pano.ui.page.register({
+    path: '/set-username',
+    component: viewComponent(
+      () => import('./theme/pages/SetUsernamePage.svelte'),
+    ),
+    ...options,
+  });
+
+  // Register Microsoft OAuth callback processing page
+  pano.ui.page.register({
+    path: '/premium-login/callback',
+    component: viewComponent(
+      () => import('./theme/pages/MicrosoftCallbackPage.svelte'),
+    ),
+    ...options,
+  });
+}
+
 export default class PremiumLoginPlugin extends PanoPlugin {
   onLoad() {
     pano = this.pano;
@@ -100,25 +152,19 @@ export default class PremiumLoginPlugin extends PanoPlugin {
         ),
         permission: `pano.plugin.${pluginId}.manage.premium.login.settings`,
       });
+
+      // A SERVERS install signs in on the panel itself, so the Microsoft button goes there too,
+      // and the callback pages are served there (the platform moves them under /panel), open to
+      // a visitor with no session yet. Panels older than `pano.ui.auth` skip this.
+      if (pano.ui.auth?.login) {
+        registerLoginContent(pano);
+        registerSignInPages(pano, { public: true });
+      }
     } else {
       // Check for Microsoft login success toast cookie
       checkMcLoginToast();
 
-      // Register set-username page (for temp-user username recovery via email link)
-      pano.ui.page.register({
-        path: '/set-username',
-        component: viewComponent(
-          () => import('./theme/pages/SetUsernamePage.svelte'),
-        ),
-      });
-
-      // Register Microsoft OAuth callback processing page
-      pano.ui.page.register({
-        path: '/premium-login/callback',
-        component: viewComponent(
-          () => import('./theme/pages/MicrosoftCallbackPage.svelte'),
-        ),
-      });
+      registerSignInPages(pano);
 
       // Register premium status display in user settings
       pano.ui.settings.cardRows.edit((items) => {
@@ -147,29 +193,7 @@ export default class PremiumLoginPlugin extends PanoPlugin {
       });
 
       // Inject Microsoft callback errors into login page & load config
-      pano.ui.auth.login.onLoad(async (data, event) => {
-        const url = new URL(event.url);
-        const mcError = url.searchParams.get('mcError');
-        if (mcError) {
-          data.error = mcError;
-        }
-
-        await loadMicrosoftConfig(event);
-
-        // Register Microsoft login button only if Microsoft login is enabled
-        if (get(microsoftLoginEnabled)) {
-          pano.ui.auth.login.alternativeMethods.add({
-            id: `${pluginId}-microsoft-login`,
-            component: viewComponent(
-              () =>
-                import(
-                  './theme/components/view/MicrosoftLoginButton.svelte'
-                ),
-            ),
-            priority: 50,
-          });
-        }
-      });
+      registerLoginContent(pano);
 
       // Inject Microsoft callback errors and username into register page & load config
       pano.ui.auth.register.onLoad(async (data, event) => {

@@ -71,7 +71,7 @@
           </div>
           <h5 class="text-danger">{$_('microsoft.login-error')}</h5>
           <p class="text-muted">{errorMessage}</p>
-          <a href="/login" class="btn btn-secondary">
+          <a href={loginHref} class="btn btn-secondary">
             {$_('microsoft.back-to-login')}
           </a>
         {/if}
@@ -81,13 +81,18 @@
 {/if}
 
 <script>
-    import {_} from '../../main.js';
+    import {_, pano} from '../../main.js';
     import {getContext, onMount} from 'svelte';
     import {goto} from '@panomc/sdk/svelte';
 
     let { data } = $props();
 
   const isBrowser = typeof window !== 'undefined';
+
+  // On a SERVERS install this page is served by the panel, which has its own sign-in page and
+  // finishes the session itself (panel-access check included).
+  const inPanel = !!(pano?.isPanel && pano.ui.auth?.login?.complete);
+  const loginHref = pano?.isPanel ? '/panel/login' : '/login';
 
   let session;
   let callbackState = $state('loading');
@@ -132,7 +137,16 @@
         return;
       }
 
-      if (body.action === 'login') {
+      if (body.action === 'login' && inPanel) {
+        mcUsername = body.mcUsername || '';
+        callbackState = 'success';
+
+        const result = await pano.ui.auth.login.complete(body.csrfToken);
+        if (result === 'NO_PANEL_ACCESS') {
+          callbackState = 'error';
+          errorMessage = $_('microsoft.no-panel-access');
+        }
+      } else if (body.action === 'login') {
         mcUsername = body.mcUsername || '';
         callbackState = 'success';
 
@@ -162,7 +176,7 @@
       } else if (body.action === 'link') {
         mcUsername = body.mcUsername || '';
         callbackState = 'linked';
-        setTimeout(() => goto('/profile/settings'), 1500);
+        setTimeout(() => (inPanel ? goto('/panel') : goto('/profile/settings')), 1500);
       }
     } catch (e) {
       console.error('[pano-plugin-premium-login] Process error:', e);

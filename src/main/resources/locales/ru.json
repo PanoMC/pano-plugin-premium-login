@@ -50,7 +50,8 @@
     "login-success": "Выполнен вход с аккаунтом Minecraft premium: {username}",
     "link-success": "Премиум-аккаунт привязан: {username}",
     "redirecting": "Перенаправление...",
-    "back-to-login": "Вернуться к входу"
+    "back-to-login": "Вернуться к входу",
+    "no-panel-access": "У этой учётной записи нет доступа к панели управления."
   },
   "plugin-settings": {
     "title": "Настройки входа через Microsoft",
