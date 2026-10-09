@@ -1,8 +1,9 @@
 import {PanoPlugin, viewComponent} from '@panomc/sdk';
-import {derived, get, writable} from 'svelte/store';
+import {derived, get} from 'svelte/store';
 import {_ as i18n} from '@panomc/sdk/utils/language';
-import ApiUtil from '@panomc/sdk/utils/api';
+import { api } from '@panomc/sdk/plugin-api';
 import { showToast } from '@panomc/sdk/toasts';
+import { microsoftLoginEnabled, setPano } from './theme/state.js';
 
 const pluginId = 'pano-plugin-premium-login';
 
@@ -28,15 +29,16 @@ export function showErrorToast(text, params = {}) {
 }
 
 export let pano;
-export const microsoftLoginEnabled = writable(false);
+// The Microsoft switch is a plain store in theme/state.js (the theme views import it from there); re-exported here.
+export { microsoftLoginEnabled };
 
 async function loadMicrosoftConfig(event) {
   try {
-    const config = await ApiUtil.get({
-      path: '/api/premium-login/config',
+    const config = await api.get({
+      path: '/config',
       request: event,
     });
-    if (config.result === 'ok' && config.microsoftLoginEnabled) {
+    if (!config.error && config.microsoftLoginEnabled) {
       microsoftLoginEnabled.set(true);
     }
   } catch (e) {
@@ -63,25 +65,30 @@ function registerLoginContent(pano) {
     if (get(microsoftLoginEnabled)) {
       pano.ui.auth.login.alternativeMethods.add({
         id: `${pluginId}-microsoft-login`,
-        component: viewComponent(
-          () =>
-            import(
-              './theme/components/view/MicrosoftLoginButton.svelte'
-            ),
-        ),
+        // the theme names the view (a theme can restyle it); the panel's own sign-in page has no view registry
+        ...(pano.isPanel
+          ? {
+              component: viewComponent(
+                () => import('./theme/views/MicrosoftLoginButton.svelte'),
+              ),
+            }
+          : {view: 'premium-login:MicrosoftLoginButton'}),
         priority: 50,
       });
     }
   });
 }
 
-/** The pages the Microsoft round trip and the username-recovery mail land on. */
+/**
+ * The pages the Microsoft round trip and the username-recovery mail land on, for the panel's own sign-in page. On the theme
+ * they are the views premium-login:SetUsernamePage and premium-login:MicrosoftCallbackPage, which register themselves.
+ */
 function registerSignInPages(pano, options = {}) {
   // Register set-username page (for temp-user username recovery via email link)
   pano.ui.page.register({
     path: '/set-username',
     component: viewComponent(
-      () => import('./theme/pages/SetUsernamePage.svelte'),
+      () => import('./theme/views/SetUsernamePage.svelte'),
     ),
     ...options,
   });
@@ -90,7 +97,7 @@ function registerSignInPages(pano, options = {}) {
   pano.ui.page.register({
     path: '/premium-login/callback',
     component: viewComponent(
-      () => import('./theme/pages/MicrosoftCallbackPage.svelte'),
+      () => import('./theme/views/MicrosoftCallbackPage.svelte'),
     ),
     ...options,
   });
@@ -99,6 +106,7 @@ function registerSignInPages(pano, options = {}) {
 export default class PremiumLoginPlugin extends PanoPlugin {
   onLoad() {
     pano = this.pano;
+    setPano(pano);
 
     if (pano.isPanel) {
       // Register premium status edit component in player edit modal
@@ -133,8 +141,8 @@ export default class PremiumLoginPlugin extends PanoPlugin {
         if (data.addon.id !== pluginId) return;
 
         try {
-          const config = await ApiUtil.get({
-            path: '/api/panel/premium-login/config',
+          const config = await api.panel.get({
+            path: '/config',
             request: event,
           });
           data.addon.config = config;
@@ -164,33 +172,9 @@ export default class PremiumLoginPlugin extends PanoPlugin {
       // Check for Microsoft login success toast cookie
       checkMcLoginToast();
 
-      registerSignInPages(pano);
-
-      // Register premium status display in user settings
-      pano.ui.settings.cardRows.edit((items) => {
-        items.push({
-          id: `${pluginId}-status-display`,
-          component: viewComponent(
-            () =>
-              import('./theme/components/view/PremiumStatusDisplay.svelte'),
-          ),
-          priority: 105,
-        });
-      });
-
-      // Register premium status display in player profile sidebar
-      pano.ui.profile.cardRows.edit((items) => {
-        items.push({
-          id: `${pluginId}-profile-sidebar-status`,
-          component: viewComponent(
-            () =>
-              import(
-                './theme/components/view/PremiumStatusProfileSidebar.svelte'
-              ),
-          ),
-          priority: 90,
-        });
-      });
+      // The sign-in pages (/set-username, /premium-login/callback), the premium status in the user settings (slot
+      // settings-card-rows) and in the player profile (slot profile-card-rows) are views that register themselves:
+      // premium-login:SetUsernamePage, :MicrosoftCallbackPage, :PremiumStatusDisplay, :PremiumStatusProfileSidebar.
 
       // Inject Microsoft callback errors into login page & load config
       registerLoginContent(pano);
@@ -214,12 +198,7 @@ export default class PremiumLoginPlugin extends PanoPlugin {
         if (get(microsoftLoginEnabled)) {
           pano.ui.auth.register.alternativeMethods.add({
             id: `${pluginId}-microsoft-register`,
-            component: viewComponent(
-              () =>
-                import(
-                  './theme/components/view/MicrosoftRegisterButton.svelte'
-                ),
-            ),
+            view: 'premium-login:MicrosoftRegisterButton',
             priority: 50,
           });
         }

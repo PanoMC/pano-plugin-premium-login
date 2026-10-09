@@ -6,14 +6,14 @@
    * @param {import('@sveltejs/kit').LayoutLoadEvent} event
    */
   export async function load(event) {
-    const { default: ApiUtil } = await import('@panomc/sdk/utils/api');
+    const { api } = await import('@panomc/sdk/plugin-api');
     const username = event.params?.username;
     if (!username || typeof username !== 'string') {
       return {};
     }
     try {
-      const res = await ApiUtil.get({
-        path: `/api/panel/premium-login/player/${encodeURIComponent(username)}`,
+      const res = await api.panel.get({
+        path: `/player/${encodeURIComponent(username)}`,
         request: event,
       });
       if (res && !res.error) {
@@ -78,7 +78,7 @@
 
 <script>
   import { _ } from '../../../main.js';
-  import ApiUtil from '@panomc/sdk/utils/api';
+  import { api } from '@panomc/sdk/plugin-api';
 
   export let playerData;
 
@@ -107,8 +107,8 @@
     if (!playerData?.username) return;
     loading = true;
     try {
-      const res = await ApiUtil.get({
-        path: `/api/panel/premium-login/player/${playerData?.username}`,
+      const res = await api.panel.get({
+        path: `/player/${playerData?.username}`,
       });
 
       if (res && !res.error) {

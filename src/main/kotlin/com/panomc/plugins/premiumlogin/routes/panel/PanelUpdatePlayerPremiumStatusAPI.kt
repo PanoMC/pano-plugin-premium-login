@@ -15,9 +15,9 @@ import com.panomc.plugins.premiumlogin.log.UpdatedPlayerPremiumStatusLog
 import com.panomc.plugins.premiumlogin.permission.ManagePremiumStatusPermission
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Bodies
-import io.vertx.ext.web.validation.builder.Parameters
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Bodies
+import com.panomc.platform.schema.dsl.Parameters
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.objectSchema
 import io.vertx.json.schema.common.dsl.Schemas.stringSchema
@@ -27,7 +27,7 @@ class PanelUpdatePlayerPremiumStatusAPI(
     private val plugin: PremiumLoginPlugin,
     private val playerPremiumStatusDao: PlayerPremiumStatusDao
 ) : PanelApi() {
-    override val paths = listOf(Path("/api/panel/premium-login/player/:username", RouteType.PUT))
+    override val paths = listOf(Path("/player/:username", RouteType.PUT))
 
     private val authProvider by lazy {
         plugin.applicationContext.getBean(AuthProvider::class.java)

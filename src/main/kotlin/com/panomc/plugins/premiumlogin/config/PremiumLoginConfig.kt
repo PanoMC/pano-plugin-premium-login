@@ -9,5 +9,5 @@ class PremiumLoginConfig(
     val microsoftClientSecret: String = "",
     val microsoftRedirectUri: String = "",
     val debugLogging: Boolean = false,
-    version: Int = 1
+    version: Int = 2
 ) : PluginConfig(version)

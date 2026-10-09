@@ -75,7 +75,7 @@
     "reveal-confirm": "Подтвердить",
     "redirect-uri": "URI перенаправления",
     "redirect-uri-desc": "Должен точно совпадать с URI, зарегистрированным в Azure AD.",
-    "redirect-uri-placeholder": "https://yoursite.com/api/premium-login/microsoft/callback",
+    "redirect-uri-placeholder": "https://yoursite.com/api/plugins/pano-plugin-premium-login/microsoft/callback",
     "save-success": "Настройки успешно сохранены!",
     "save-error": "Не удалось сохранить настройки.",
     "debug-logging": "Отладочные логи",
@@ -94,6 +94,35 @@
   "activity-logs": {
     "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> изменил(а) статус аутентификации игрока <b>{targetUsername}</b> на <b>{newAccountType}</b>.",
     "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> обновил(а) настройки плагина Premium Login."
+  },
+  "fallback": {
+    "set-username": {
+      "title": "Выберите новое имя пользователя",
+      "heading": "Выберите новое имя пользователя",
+      "lead": "Ваше имя пользователя заняла премиум-учётная запись Minecraft. Выберите новое имя, чтобы продолжить.",
+      "username": "Новое имя пользователя",
+      "button": "Сохранить",
+      "done": "Имя пользователя обновлено. Теперь вы можете войти с ним."
+    },
+    "callback": {
+      "title": "Вход через Minecraft",
+      "heading": "Выполняется вход",
+      "lead": "Мы завершаем вход через Microsoft.",
+      "done": "Вы вошли с аккаунтом Minecraft.",
+      "continue": "Продолжить",
+      "invalid": "Эта ссылка для входа недействительна. Начните заново со страницы входа."
+    },
+    "errors": {
+      "INVALID_TOKEN": "Эта ссылка недействительна или устарела. Запросите новую.",
+      "REGISTER_USERNAME_TOO_SHORT": "Имя пользователя слишком короткое.",
+      "REGISTER_USERNAME_TOO_LONG": "Имя пользователя слишком длинное.",
+      "REGISTER_INVALID_USERNAME": "Имя пользователя содержит недопустимые символы.",
+      "REGISTER_USERNAME_NOT_AVAILABLE": "Это имя пользователя уже занято.",
+      "MICROSOFT_LOGIN_NOT_ENABLED": "Вход через Microsoft на этом сайте отключён.",
+      "MICROSOFT_LOGIN_FAILED": "Не удалось войти через Microsoft. Начните заново со страницы входа.",
+      "MINECRAFT_ACCOUNT_ALREADY_LINKED": "Этот аккаунт Minecraft уже привязан к другому пользователю.",
+      "BAD_REQUEST": "Эта ссылка для входа недействительна. Начните заново со страницы входа."
+    }
   },
   "mail": {
     "username-change": {

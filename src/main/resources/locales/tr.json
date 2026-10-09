@@ -75,7 +75,7 @@
     "reveal-confirm": "Doğrula",
     "redirect-uri": "Yönlendirme URI'si",
     "redirect-uri-desc": "Azure AD'de kayıtlı URI ile tam olarak eşleşmelidir.",
-    "redirect-uri-placeholder": "https://siteniz.com/api/premium-login/microsoft/callback",
+    "redirect-uri-placeholder": "https://siteniz.com/api/plugins/pano-plugin-premium-login/microsoft/callback",
     "save-success": "Ayarlar başarıyla kaydedildi!",
     "save-error": "Ayarlar kaydedilemedi.",
     "debug-logging": "Hata Ayıklama Logları",
@@ -94,6 +94,35 @@
   "activity-logs": {
     "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b>, <b>{targetUsername}</b> oyuncusunun kimlik doğrulama durumunu <b>{newAccountType}</b> olarak değiştirdi.",
     "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> Premium Login eklenti ayarlarını güncelledi."
+  },
+  "fallback": {
+    "set-username": {
+      "title": "Yeni kullanıcı adı seç",
+      "heading": "Yeni kullanıcı adı seç",
+      "lead": "Bir Minecraft premium hesabı kullanıcı adını talep etti. Devam etmek için yeni bir kullanıcı adı seç.",
+      "username": "Yeni kullanıcı adı",
+      "button": "Kaydet",
+      "done": "Kullanıcı adın güncellendi. Şimdi onunla giriş yapabilirsin."
+    },
+    "callback": {
+      "title": "Minecraft ile giriş yap",
+      "heading": "Giriş yapılıyor",
+      "lead": "Microsoft ile girişin tamamlanıyor.",
+      "done": "Minecraft hesabınla giriş yaptın.",
+      "continue": "Devam et",
+      "invalid": "Bu giriş bağlantısı geçerli değil. Giriş sayfasından yeniden başla."
+    },
+    "errors": {
+      "INVALID_TOKEN": "Bu bağlantı geçerli değil ya da süresi dolmuş. Yenisini iste.",
+      "REGISTER_USERNAME_TOO_SHORT": "Kullanıcı adı çok kısa.",
+      "REGISTER_USERNAME_TOO_LONG": "Kullanıcı adı çok uzun.",
+      "REGISTER_INVALID_USERNAME": "Kullanıcı adı izin verilmeyen karakterler içeriyor.",
+      "REGISTER_USERNAME_NOT_AVAILABLE": "Bu kullanıcı adı zaten alınmış.",
+      "MICROSOFT_LOGIN_NOT_ENABLED": "Microsoft ile giriş bu sitede açık değil.",
+      "MICROSOFT_LOGIN_FAILED": "Microsoft ile giriş yapılamadı. Giriş sayfasından yeniden başla.",
+      "MINECRAFT_ACCOUNT_ALREADY_LINKED": "Bu Minecraft hesabı başka bir kullanıcıya bağlı.",
+      "BAD_REQUEST": "Bu giriş bağlantısı geçerli değil. Giriş sayfasından yeniden başla."
+    }
   },
   "mail": {
     "username-change": {

@@ -11,9 +11,11 @@ import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
 import com.panomc.plugins.premiumlogin.db.model.PlayerPremiumStatus
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import java.util.*
+import com.panomc.platform.schema.EndpointDoc
+import io.vertx.json.schema.common.dsl.Schemas.*
 
 /**
  * Unlinks the premium Minecraft account from the logged-in user.
@@ -24,7 +26,13 @@ class MicrosoftUnlinkAPI(
     private val plugin: PremiumLoginPlugin,
     private val playerPremiumStatusDao: PlayerPremiumStatusDao
 ) : LoggedInApi() {
-    override val paths = listOf(Path("/api/premium-login/microsoft/unlink", RouteType.POST))
+    override val paths = listOf(Path("/microsoft/unlink", RouteType.POST))
+
+    override val doc = EndpointDoc(
+        summary = "Unlinks the premium account of the signed-in user.",
+        tag = "microsoft",
+        response = objectSchema()
+    )
 
     private val configManager by lazy {
         plugin.pluginBeanContext.getBean(PluginConfigManager::class.java) as PluginConfigManager<PremiumLoginConfig>

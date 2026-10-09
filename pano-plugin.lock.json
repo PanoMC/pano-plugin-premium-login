@@ -1,0 +1,107 @@
+{
+  "controllers": {},
+  "format": 1,
+  "views": {
+    "premium-login:MicrosoftCallbackPage": {
+      "classes": [
+        "premium-login-microsoft-callback-page",
+        "premium-login-microsoft-callback-page__action",
+        "premium-login-microsoft-callback-page__body",
+        "premium-login-microsoft-callback-page__bounce-in",
+        "premium-login-microsoft-callback-page__fade-in",
+        "premium-login-microsoft-callback-page__icon",
+        "premium-login-microsoft-callback-page__link-success",
+        "premium-login-microsoft-callback-page__login-error",
+        "premium-login-microsoft-callback-page__shake",
+        "premium-login-microsoft-callback-page__title"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "data": {
+          "required": true
+        }
+      },
+      "slots": []
+    },
+    "premium-login:MicrosoftLoginButton": {
+      "classes": [
+        "premium-login-microsoft-login-button",
+        "premium-login-microsoft-login-button__button",
+        "premium-login-microsoft-login-button__shake"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {},
+      "slots": []
+    },
+    "premium-login:MicrosoftRegisterButton": {
+      "classes": [
+        "premium-login-microsoft-register-button",
+        "premium-login-microsoft-register-button__button",
+        "premium-login-microsoft-register-button__shake",
+        "premium-login-microsoft-register-button__verified"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {},
+      "slots": []
+    },
+    "premium-login:PremiumStatusDisplay": {
+      "classes": [
+        "premium-login-premium-status-display",
+        "premium-login-premium-status-display__action",
+        "premium-login-premium-status-display__fade-in",
+        "premium-login-premium-status-display__link-button",
+        "premium-login-premium-status-display__select"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "data": {
+          "required": true
+        },
+        "onRegister": {
+          "required": true
+        }
+      },
+      "slots": []
+    },
+    "premium-login:PremiumStatusProfileSidebar": {
+      "classes": [
+        "premium-login-premium-status-profile-sidebar",
+        "premium-login-premium-status-profile-sidebar__auto",
+        "premium-login-premium-status-profile-sidebar__badge",
+        "premium-login-premium-status-profile-sidebar__body",
+        "premium-login-premium-status-profile-sidebar__cracked",
+        "premium-login-premium-status-profile-sidebar__fade-in",
+        "premium-login-premium-status-profile-sidebar__header"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "data": {
+          "required": true
+        }
+      },
+      "slots": []
+    },
+    "premium-login:SetUsernamePage": {
+      "classes": [
+        "premium-login-set-username-page",
+        "premium-login-set-username-page__action",
+        "premium-login-set-username-page__alert",
+        "premium-login-set-username-page__body",
+        "premium-login-set-username-page__fade-in",
+        "premium-login-set-username-page__input",
+        "premium-login-set-username-page__saving",
+        "premium-login-set-username-page__success",
+        "premium-login-set-username-page__title"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {},
+      "slots": []
+    }
+  }
+}

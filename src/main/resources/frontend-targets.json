@@ -1,0 +1,4 @@
+{
+  "set-username": { "path": "/set-username?token={token}", "fallback": true },
+  "callback": { "path": "/premium-login/callback", "fallback": true, "createsSession": true }
+}

@@ -11,8 +11,8 @@ import com.panomc.plugins.premiumlogin.log.UpdatedPremiumLoginSettingsLog
 import com.panomc.plugins.premiumlogin.permission.ManagePremiumLoginSettingsPermission
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Bodies
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Bodies
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.*
 
@@ -20,7 +20,7 @@ import io.vertx.json.schema.common.dsl.Schemas.*
 class PanelUpdatePremiumLoginConfigAPI(
     private val plugin: PremiumLoginPlugin
 ) : PanelApi() {
-    override val paths = listOf(Path("/api/panel/premium-login/config", RouteType.PUT))
+    override val paths = listOf(Path("/config", RouteType.PUT))
 
     private val authProvider by lazy {
         plugin.applicationContext.getBean(AuthProvider::class.java)

@@ -11,16 +11,25 @@ import com.panomc.plugins.premiumlogin.PremiumLoginPlugin
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.RequestPredicate
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Bodies
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Bodies
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas
+import com.panomc.platform.schema.EndpointDoc
+import io.vertx.json.schema.common.dsl.Schemas.*
 
 @Endpoint
 class SetUsernameAPI(
     private val plugin: PremiumLoginPlugin
 ) : Api() {
-    override val paths = listOf(Path("/api/premium-login/set-username", RouteType.POST))
+    override val paths = listOf(Path("/set-username", RouteType.POST))
+
+    override val doc = EndpointDoc(
+        summary = "Sets a new user name with the token from the username change mail and uses the token up.",
+        tag = "set-username",
+        response = objectSchema(),
+        errors = listOf(InvalidToken::class, RegisterUsernameTooShort::class, RegisterUsernameTooLong::class, RegisterInvalidUsername::class, RegisterUsernameNotAvailable::class)
+    )
 
     private val databaseManager by lazy {
         plugin.applicationContext.getBean(DatabaseManager::class.java)

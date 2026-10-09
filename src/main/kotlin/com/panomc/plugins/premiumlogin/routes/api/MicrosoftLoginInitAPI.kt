@@ -9,15 +9,25 @@ import com.panomc.plugins.premiumlogin.error.MicrosoftLoginNotEnabled
 import com.panomc.plugins.premiumlogin.service.MicrosoftOAuthService
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import java.util.*
+import com.panomc.platform.schema.EndpointDoc
+import io.vertx.json.schema.common.dsl.Schemas.*
 
 @Endpoint
 class MicrosoftLoginInitAPI(
     private val plugin: PremiumLoginPlugin
 ) : Api() {
-    override val paths = listOf(Path("/api/premium-login/microsoft/login", RouteType.GET))
+    override val paths = listOf(Path("/microsoft/login", RouteType.GET))
+
+    override val doc = EndpointDoc(
+        summary = "Returns the Microsoft address to send the browser to for signing in.",
+        tag = "microsoft",
+        response = objectSchema()
+            .requiredProperty("redirectUrl", stringSchema()),
+        errors = listOf(MicrosoftLoginNotEnabled::class)
+    )
 
     private val configManager by lazy {
         plugin.pluginBeanContext.getBean(PluginConfigManager::class.java) as PluginConfigManager<PremiumLoginConfig>

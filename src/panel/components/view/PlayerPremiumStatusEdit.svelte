@@ -66,7 +66,7 @@
 
 <script>
     import {_} from '../../../main.js';
-    import ApiUtil from '@panomc/sdk/utils/api';
+    import { api } from '@panomc/sdk/plugin-api';
 
     export let playerData;
   export let onHookRegister;
@@ -93,8 +93,8 @@
     if (!playerData?.username) return;
     loading = true;
     try {
-      const res = await ApiUtil.get({
-        path: `/api/panel/premium-login/player/${playerData?.username}`,
+      const res = await api.panel.get({
+        path: `/player/${playerData?.username}`,
       });
 
       if (res && !res.error) {
@@ -128,8 +128,8 @@
     try {
       // Save account type if changed
       if (accountType !== initialType) {
-        const result = await ApiUtil.put({
-          path: `/api/panel/premium-login/player/${playerData?.username}`,
+        const result = await api.panel.put({
+          path: `/player/${playerData?.username}`,
           body: { accountType },
         });
 
@@ -144,8 +144,8 @@
 
       // Unlink if pending
       if (pendingUnlink) {
-        const res = await ApiUtil.post({
-          path: `/api/panel/premium-login/player/${playerData?.username}/unlink`,
+        const res = await api.panel.post({
+          path: `/player/${playerData?.username}/unlink`,
         });
 
         if (res && !res.error) {

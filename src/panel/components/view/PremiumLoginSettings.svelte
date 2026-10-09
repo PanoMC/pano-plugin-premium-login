@@ -220,7 +220,7 @@
 
 <script>
     import { _, showSuccessToast, showErrorToast } from '../../../main.js';
-    import ApiUtil from '@panomc/sdk/utils/api';
+    import { api } from '@panomc/sdk/plugin-api';
 
     export let addon;
 
@@ -246,7 +246,7 @@
 
   // Auto-fill redirect URI if empty
   const defaultRedirectUri = typeof window !== 'undefined'
-    ? `${window.location.origin}/api/premium-login/microsoft/callback`
+    ? `${window.location.origin}/api/plugins/pano-plugin-premium-login/microsoft/callback`
     : '';
 
   if (!config.microsoftRedirectUri && defaultRedirectUri) {
@@ -285,8 +285,8 @@
     revealError = false;
 
     try {
-      const res = await ApiUtil.post({
-        path: '/api/panel/premium-login/config/reveal-secret',
+      const res = await api.panel.post({
+        path: '/config/reveal-secret',
         body: { password: revealPassword },
       });
 
@@ -319,8 +319,8 @@
         delete body.microsoftClientSecret;
       }
 
-      await ApiUtil.put({
-        path: '/api/panel/premium-login/config',
+      await api.panel.put({
+        path: '/config',
         body,
       });
       addon.config = { ...config, hasSecret: config.microsoftClientSecret ? true : hasSecret };

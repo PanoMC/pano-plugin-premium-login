@@ -2,4 +2,4 @@ package com.panomc.plugins.premiumlogin.error
 
 import com.panomc.platform.model.Error
 
-class InvalidPassword : Error(403)
+class InvalidPassword : Error("INVALID_PASSWORD", 403)

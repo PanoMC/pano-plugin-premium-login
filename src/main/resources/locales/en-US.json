@@ -75,7 +75,7 @@
     "reveal-confirm": "Verify",
     "redirect-uri": "Redirect URI",
     "redirect-uri-desc": "Must match exactly with the URI registered in Azure AD.",
-    "redirect-uri-placeholder": "https://yoursite.com/api/premium-login/microsoft/callback",
+    "redirect-uri-placeholder": "https://yoursite.com/api/plugins/pano-plugin-premium-login/microsoft/callback",
     "save-success": "Settings saved successfully!",
     "save-error": "Failed to save settings.",
     "debug-logging": "Debug Logging",
@@ -94,6 +94,35 @@
   "activity-logs": {
     "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> changed the authentication status of player <b>{targetUsername}</b> to <b>{newAccountType}</b>.",
     "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> updated the Premium Login plugin settings."
+  },
+  "fallback": {
+    "set-username": {
+      "title": "Choose a new username",
+      "heading": "Choose a new username",
+      "lead": "A Minecraft premium account has claimed your username. Choose a new username to continue.",
+      "username": "New username",
+      "button": "Save",
+      "done": "Your username is updated. You can sign in with it now."
+    },
+    "callback": {
+      "title": "Sign in with Minecraft",
+      "heading": "Signing you in",
+      "lead": "We are finishing your sign-in with Microsoft.",
+      "done": "You are signed in with your Minecraft account.",
+      "continue": "Continue",
+      "invalid": "This sign-in link is not valid. Start again from the sign-in page."
+    },
+    "errors": {
+      "INVALID_TOKEN": "This link is not valid or has expired. Request a new one.",
+      "REGISTER_USERNAME_TOO_SHORT": "The username is too short.",
+      "REGISTER_USERNAME_TOO_LONG": "The username is too long.",
+      "REGISTER_INVALID_USERNAME": "The username contains characters that are not allowed.",
+      "REGISTER_USERNAME_NOT_AVAILABLE": "This username is already taken.",
+      "MICROSOFT_LOGIN_NOT_ENABLED": "Sign in with Microsoft is not enabled on this site.",
+      "MICROSOFT_LOGIN_FAILED": "Signing in with Microsoft did not work. Start again from the sign-in page.",
+      "MINECRAFT_ACCOUNT_ALREADY_LINKED": "This Minecraft account is already linked to another user.",
+      "BAD_REQUEST": "This sign-in link is not valid. Start again from the sign-in page."
+    }
   },
   "mail": {
     "username-change": {

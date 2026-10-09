@@ -11,8 +11,8 @@ import com.panomc.plugins.premiumlogin.error.InvalidPassword
 import com.panomc.plugins.premiumlogin.permission.ManagePremiumLoginSettingsPermission
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Bodies
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Bodies
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.objectSchema
 import io.vertx.json.schema.common.dsl.Schemas.stringSchema
@@ -21,7 +21,7 @@ import io.vertx.json.schema.common.dsl.Schemas.stringSchema
 class PanelRevealSecretAPI(
     private val plugin: PremiumLoginPlugin
 ) : PanelApi() {
-    override val paths = listOf(Path("/api/panel/premium-login/config/reveal-secret", RouteType.POST))
+    override val paths = listOf(Path("/config/reveal-secret", RouteType.POST))
 
     private val authProvider by lazy {
         plugin.applicationContext.getBean(AuthProvider::class.java)

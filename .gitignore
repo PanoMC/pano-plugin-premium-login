@@ -15,3 +15,6 @@ src/main/resources/*.zip
 
 manifest.json
 bin
+logs
+
+client

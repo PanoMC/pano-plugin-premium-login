@@ -8,17 +8,31 @@ import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Parameters
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Parameters
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.stringSchema
+import com.panomc.platform.schema.EndpointDoc
+import io.vertx.json.schema.common.dsl.Schemas.*
 
 @Endpoint
 class GetPlayerPremiumStatusAPI(
     private val plugin: PremiumLoginPlugin,
     private val playerPremiumStatusDao: PlayerPremiumStatusDao
 ) : Api() {
-    override val paths = listOf(Path("/api/premium-login/player/:username", RouteType.GET))
+    override val paths = listOf(Path("/player/:username", RouteType.GET))
+
+    override val doc = EndpointDoc(
+        summary = "Reads the premium account status of a player by user name; an unknown player is reported as AUTO and not linked.",
+        tag = "player",
+        response = objectSchema()
+            .requiredProperty("accountType", stringSchema())
+            .requiredProperty("source", stringSchema())
+            .requiredProperty("lastUpdated", intSchema())
+            .requiredProperty("playerUuid", stringSchema())
+            .requiredProperty("playerName", stringSchema())
+            .requiredProperty("premiumLinked", booleanSchema())
+    )
 
     override fun getValidationHandler(schemaRepository: SchemaRepository): ValidationHandler =
         ValidationHandlerBuilder.create(schemaRepository)

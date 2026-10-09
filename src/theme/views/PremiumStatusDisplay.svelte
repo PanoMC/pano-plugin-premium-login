@@ -1,4 +1,15 @@
-<div class="row pt-2 pb-3 mb-3 border-bottom animate__animated animate__fadeIn">
+<style>
+  .premium-login-premium-status-display__fade-in {
+    animation: premium-login-fade-in 250ms both;
+  }
+
+  @keyframes premium-login-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+
+<div class="premium-login-premium-status-display row pt-2 pb-3 mb-3 border-bottom premium-login-premium-status-display__fade-in">
   <label class="col-md-4 col-form-label pb-2" for="premiumStatusSelect">
     <div class="d-flex align-items-center gap-2 mb-2">
       <i class="fas fa-shield-alt text-secondary"></i>
@@ -14,7 +25,7 @@
       </div>
     {:else}
       <div class="d-flex align-items-center gap-3">
-        <select class="form-select form-select-sm" id="premiumStatusSelect" bind:value={accountType} style="max-width: 200px;" disabled={saving}>
+        <select class="premium-login-premium-status-display__select form-select form-select-sm" id="premiumStatusSelect" bind:value={accountType} style="max-width: 200px;" disabled={saving}>
           <option value="PREMIUM">{$_('account-type.premium')}</option>
           <option value="CRACKED">{$_('account-type.cracked')}</option>
           <option value="AUTO">{$_('account-type.auto')}</option>
@@ -41,7 +52,7 @@
             <i class="fas fa-check-circle me-1"></i>
             {$_('settings.linked')}
             <button
-              class="btn btn-link btn-sm p-0 ms-2 text-danger"
+              class="premium-login-premium-status-display__action btn btn-link btn-sm p-0 ms-2 text-danger"
               type="button"
               disabled={unlinking}
               onclick={unlinkAccount}>
@@ -56,7 +67,7 @@
             <i class="fas fa-link me-1"></i>
             {$_('settings.link-desc')}
             <button
-              class="btn btn-link btn-sm p-0 ms-1"
+              class="premium-login-premium-status-display__link-button btn btn-link btn-sm p-0 ms-1"
               type="button"
               disabled={linking}
               onclick={startLinkAccount}>
@@ -73,7 +84,10 @@
 </div>
 
 <script module>
-    import ApiUtil from '@panomc/sdk/utils/api';
+    import { api } from '@panomc/sdk/plugin-api';
+
+    // The premium status card in the user settings (slot settings-card-rows).
+    export const view = { slot: 'settings-card-rows', id: 'pano-plugin-premium-login-status-display', priority: 105 };
 
     export async function load(event) {
     try {
@@ -81,12 +95,12 @@
       if (!user) return { status: null, microsoftLoginEnabled: false };
 
       const [statusRes, configRes] = await Promise.all([
-        ApiUtil.get({
-          path: `/api/premium-login/player/${user.username}`,
+        api.get({
+          path: `/player/${user.username}`,
           request: event,
         }),
-        ApiUtil.get({
-          path: '/api/premium-login/config',
+        api.get({
+          path: '/config',
           request: event,
         }),
       ]);
@@ -104,7 +118,11 @@
 
 <script>
   import { untrack } from 'svelte';
-  import { _ } from '../../../main.js';
+  import { derived } from 'svelte/store';
+  import { _ as i18n } from '@panomc/sdk/utils/language';
+
+  // plugin translations: $_('key') reads plugins.pano-plugin-premium-login.key
+  const _ = derived(i18n, ($_fn) => (key, options) => $_fn(`plugins.pano-plugin-premium-login.${key}`, options));
 
   let { onRegister, data } = $props();
 
@@ -149,7 +167,7 @@
     saving = true;
 
     try {
-      const res = await fetch('/api/premium-login/me', {
+      const res = await fetch('/api/plugins/pano-plugin-premium-login/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ accountType }),
@@ -158,7 +176,7 @@
       const result = await res.json();
 
       if (result && result.error) {
-        console.error('[pano-plugin-premium-login] Save failed:', result.error);
+        console.error('[pano-plugin-premium-login] Save failed:', result.error.code);
         return;
       }
 
@@ -181,8 +199,8 @@
   async function startLinkAccount() {
     linking = true;
     try {
-      const res = await ApiUtil.get({
-        path: '/api/premium-login/microsoft/link',
+      const res = await api.get({
+        path: '/microsoft/link',
       });
 
       if (res?.redirectUrl) {
@@ -198,12 +216,12 @@
   async function unlinkAccount() {
     unlinking = true;
     try {
-      const res = await fetch('/api/premium-login/microsoft/unlink', {
+      const res = await fetch('/api/plugins/pano-plugin-premium-login/microsoft/unlink', {
         method: 'POST',
       });
       const result = await res.json();
 
-      if (result?.result === 'ok') {
+      if (result && !result.error) {
         // Reload to reflect changes
         window.location.reload();
         return;

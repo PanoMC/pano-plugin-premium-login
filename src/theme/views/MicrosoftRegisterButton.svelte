@@ -1,64 +1,49 @@
 <style>
-  .microsoft-register-wrapper {
+
+  .premium-login-microsoft-register-button {
     position: relative;
   }
 
-  .btn-microsoft {
+  .premium-login-microsoft-register-button__button {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     width: 100%;
     padding: 0.65rem 1rem;
-    border-radius: 0.5rem;
     font-weight: 500;
-    background: linear-gradient(135deg, #107c10 0%, #0e6b0e 100%);
-    border: none;
-    color: #fff;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(16, 124, 16, 0.25);
   }
 
-  .btn-microsoft:hover:not(:disabled) {
-    background: linear-gradient(135deg, #0e6b0e 0%, #0c5c0c 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 124, 16, 0.35);
-    color: #fff;
-  }
-
-  .btn-microsoft:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  .btn-microsoft:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
-
-  .mc-verified {
+  .premium-login-microsoft-register-button__verified {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    background: rgba(16, 124, 16, 0.1);
-    border: 1px solid rgba(16, 124, 16, 0.3);
-    color: #107c10;
     font-weight: 500;
     font-size: 0.9rem;
+  }
+
+  .premium-login-microsoft-register-button__shake {
+    animation: premium-login-shake 250ms both;
+  }
+
+  @keyframes premium-login-shake {
+    from, to { transform: translate3d(0, 0, 0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
+    20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); }
   }
 </style>
 
 {#if $microsoftLoginEnabled}
-  <div class="microsoft-register-wrapper">
+  <div class="premium-login-microsoft-register-button">
     {#if mcUsername}
-      <div class="mc-verified mb-2">
+      <div class="premium-login-microsoft-register-button__verified mb-2">
         <i class="fas fa-check-circle"></i>
         <span>{$_('microsoft.verified', { values: { username: mcUsername } })}</span>
       </div>
     {:else}
       <button
-        class="btn btn-microsoft"
+        class="premium-login-microsoft-register-button__button btn"
         type="button"
         disabled={loading}
         onclick={startMicrosoftRegister}>
@@ -73,14 +58,19 @@
     {/if}
 
     {#if errorMessage}
-      <div class="alert alert-danger py-2 mt-2 small animate__animated animate__shakeX">{errorMessage}</div>
+      <div class="alert alert-danger py-2 mt-2 small premium-login-microsoft-register-button__shake">{errorMessage}</div>
     {/if}
   </div>
 {/if}
 
 <script>
-    import {_, microsoftLoginEnabled} from '../../../main.js';
+    import { derived } from 'svelte/store';
+    import { _ as i18n } from '@panomc/sdk/utils/language';
+    import { microsoftLoginEnabled } from '../state.js';
     import {onMount} from 'svelte';
+
+    // plugin translations: $_('key') reads plugins.pano-plugin-premium-login.key
+    const _ = derived(i18n, ($_fn) => (key, options) => $_fn(`plugins.pano-plugin-premium-login.${key}`, options));
 
     let loading = $state(false);
   let errorMessage = $state('');
@@ -101,15 +91,15 @@
     errorMessage = '';
 
     try {
-      const res = await fetch('/api/premium-login/microsoft/register');
+      const res = await fetch('/api/plugins/pano-plugin-premium-login/microsoft/register');
       const body = await res.json();
 
-      if (body.result === 'ok' && body.redirectUrl) {
+      if (!body.error && body.redirectUrl) {
         window.location.href = body.redirectUrl;
         return;
       }
 
-      errorMessage = body.error || $_('microsoft.login-error');
+      errorMessage = body.error?.code || $_('microsoft.login-error');
     } catch (e) {
       console.error('[pano-plugin-premium-login] Microsoft register init failed', e);
       errorMessage = $_('microsoft.login-error');

@@ -1,36 +1,40 @@
 <style>
-  .set-username-container {
+
+  .premium-login-set-username-page {
     max-width: 480px;
     margin: 0 auto;
     padding: 2rem 1rem;
   }
 
-  .set-username-card {
-    border-radius: 1rem;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+  .premium-login-set-username-page__body {
+    padding: 2rem;
   }
 
-  .set-username-card .card-body {
-    padding: 2rem;
+  .premium-login-set-username-page__fade-in {
+    animation: premium-login-fade-in 250ms both;
+  }
+
+  @keyframes premium-login-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 </style>
 
-<div class="set-username-container animate__animated animate__fadeIn">
-  <div class="card set-username-card">
-    <div class="card-body">
-      <h5 class="card-title text-center">{$_('set-username.title')}</h5>
+<div class="premium-login-set-username-page premium-login-set-username-page__fade-in">
+  <div class="card">
+    <div class="premium-login-set-username-page__body card-body">
+      <h5 class="premium-login-set-username-page__title card-title text-center">{$_('set-username.title')}</h5>
       <p class="text-muted text-center">{$_('set-username.description')}</p>
 
       {#if error}
-        <div class="alert alert-danger py-2" role="alert">{error}</div>
+        <div class="premium-login-set-username-page__alert alert alert-danger py-2" role="alert">{error}</div>
       {/if}
 
       {#if success}
-        <div class="alert alert-success py-2 text-center" role="alert">
+        <div class="premium-login-set-username-page__success alert alert-success py-2 text-center" role="alert">
           {$_('set-username.success')}
         </div>
-        <a href={pano?.isPanel ? '/panel/login' : '/login'} class="btn btn-secondary w-100 mt-2">
+        <a href={pano?.isPanel ? '/panel/login' : '/login'} class="premium-login-set-username-page__action btn btn-secondary w-100 mt-2">
           {$_('set-username.go-to-login')}
         </a>
       {:else}
@@ -40,7 +44,7 @@
               <input
                 type="text"
                 id="newUsername"
-                class="form-control"
+                class="premium-login-set-username-page__input form-control"
                 disabled={loading}
                 maxlength="16"
                 bind:value={newUsername} />
@@ -48,7 +52,7 @@
             </div>
             <button
               type="submit"
-              class="btn btn-lg btn-secondary w-100"
+              class="premium-login-set-username-page__saving btn btn-lg btn-secondary w-100"
               class:disabled={loading || !newUsername || newUsername.length < 3}
               disabled={loading || !newUsername || newUsername.length < 3}>
               {#if loading}
@@ -65,10 +69,20 @@
   </div>
 </div>
 
+<script module>
+  // The page the username-recovery mail links to.
+  export const view = { path: '/set-username' };
+</script>
+
 <script>
-    import {_, pano} from '../../main.js';
+    import { derived } from 'svelte/store';
+    import { _ as i18n } from '@panomc/sdk/utils/language';
+    import { pano } from '../state.js';
     import {onMount} from 'svelte';
-    import ApiUtil from '@panomc/sdk/utils/api';
+    import { api } from '@panomc/sdk/plugin-api';
+
+    // plugin translations: $_('key') reads plugins.pano-plugin-premium-login.key
+    const _ = derived(i18n, ($_fn) => (key, options) => $_fn(`plugins.pano-plugin-premium-login.${key}`, options));
 
     const ERROR_KEYS = {
     REGISTER_USERNAME_NOT_AVAILABLE: 'set-username.error.REGISTER_USERNAME_NOT_AVAILABLE',
@@ -103,13 +117,13 @@
     error = null;
 
     try {
-      const body = await ApiUtil.post({
-        path: '/api/premium-login/set-username',
+      const body = await api.post({
+        path: '/set-username',
         body: { token, newUsername },
       });
 
-      if (body.result !== 'ok') {
-        const errorCode = body.error || 'UNKNOWN';
+      if (body.error) {
+        const errorCode = body.error.code || 'UNKNOWN';
         const translationKey = ERROR_KEYS[errorCode];
         error = translationKey ? $_(translationKey) : errorCode;
         loading = false;

@@ -5,8 +5,13 @@ import com.panomc.platform.api.config.PluginConfigManager
 import com.panomc.platform.auth.AuthProvider
 import com.panomc.platform.config.ConfigManager
 import com.panomc.platform.db.DatabaseManager
+import com.panomc.platform.error.BadRequest
+import com.panomc.platform.error.NotLoggedIn
+import com.panomc.platform.frontend.FrontendUrlMap
 import com.panomc.platform.mail.MailManager
 import com.panomc.platform.model.*
+import com.panomc.platform.schema.CoreSchemas
+import com.panomc.platform.schema.EndpointDoc
 import com.panomc.platform.token.TokenProvider
 import com.panomc.platform.token.SetUsernameTokenType
 import com.panomc.plugins.premiumlogin.PremiumLoginPlugin
@@ -15,11 +20,14 @@ import com.panomc.plugins.premiumlogin.config.PremiumLoginConfig
 import com.panomc.plugins.premiumlogin.config.StatusSource
 import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
 import com.panomc.plugins.premiumlogin.db.model.PlayerPremiumStatus
+import com.panomc.plugins.premiumlogin.error.MicrosoftLoginFailed
+import com.panomc.plugins.premiumlogin.error.MicrosoftLoginNotEnabled
+import com.panomc.plugins.premiumlogin.error.MinecraftAccountAlreadyLinked
 import com.panomc.plugins.premiumlogin.mail.UsernameChangeMail
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Bodies
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Bodies
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.objectSchema
 import io.vertx.json.schema.common.dsl.Schemas.stringSchema
@@ -35,7 +43,18 @@ class MicrosoftProcessAPI(
     private val plugin: PremiumLoginPlugin,
     private val playerPremiumStatusDao: PlayerPremiumStatusDao
 ) : Api() {
-    override val paths = listOf(Path("/api/premium-login/microsoft/process", RouteType.POST))
+    override val paths = listOf(Path("/microsoft/process", RouteType.POST))
+
+    override val doc = EndpointDoc(
+        summary = "Finishes a Microsoft sign-in: exchanges the code from the callback for a Minecraft profile and signs in, registers or links the account.",
+        tag = "microsoft",
+        response = CoreSchemas.sessionFields(
+            objectSchema()
+                .requiredProperty("action", stringSchema())
+                .optionalProperty("mcUsername", stringSchema())
+        ),
+        errors = listOf(BadRequest::class, NotLoggedIn::class, MicrosoftLoginNotEnabled::class, MicrosoftLoginFailed::class, MinecraftAccountAlreadyLinked::class)
+    )
 
     private val configManager by lazy {
         plugin.pluginBeanContext.getBean(PluginConfigManager::class.java) as PluginConfigManager<PremiumLoginConfig>
@@ -65,6 +84,10 @@ class MicrosoftProcessAPI(
         plugin.applicationContext.getBean(ConfigManager::class.java)
     }
 
+    private val frontendUrlMap by lazy {
+        plugin.applicationContext.getBean(FrontendUrlMap::class.java)
+    }
+
     private fun debugLog(msg: String) {
         if (configManager.config.debugLogging) {
             plugin.logger.info(msg)
@@ -83,9 +106,25 @@ class MicrosoftProcessAPI(
             .build()
 
     override suspend fun handle(context: RoutingContext): Result {
-        val body = context.body().asJsonObject()
-        val code = body.getString("code")
-        val stateRaw = body.getString("state")
+        val body = try {
+            context.body().asJsonObject()
+        } catch (_: Exception) {
+            null
+        }
+        val code = try {
+            body?.getString("code")
+        } catch (_: Exception) {
+            null
+        }
+        val stateRaw = try {
+            body?.getString("state")
+        } catch (_: Exception) {
+            null
+        }
+
+        if (code.isNullOrBlank() || stateRaw.isNullOrBlank()) {
+            throw BadRequest()
+        }
 
         val action = try {
             String(Base64.getUrlDecoder().decode(stateRaw))
@@ -94,7 +133,7 @@ class MicrosoftProcessAPI(
         }
 
         if (!configManager.config.microsoftLoginEnabled) {
-            return Successful(mapOf("error" to "Microsoft login is not enabled."))
+            throw MicrosoftLoginNotEnabled("Microsoft login is not enabled.", 400)
         }
 
         // Exchange code for Minecraft profile
@@ -102,7 +141,7 @@ class MicrosoftProcessAPI(
             oauthService.exchangeCodeForMinecraftProfile(code)
         } catch (e: Exception) {
             plugin.logger.error("Microsoft OAuth failed: ${e.message}", e)
-            return Successful(mapOf("error" to (e.message ?: "Microsoft login failed.")))
+            throw MicrosoftLoginFailed(e.message ?: "Microsoft login failed.", 400)
         }
 
         val sqlClient = getSqlClient()
@@ -190,15 +229,15 @@ class MicrosoftProcessAPI(
         mcUsername: String,
         sqlClient: io.vertx.sqlclient.SqlClient
     ): Result {
-        val authToken = authProvider.login(panoUsername, context, sqlClient)
-        val csrfToken = UUID.randomUUID().toString()
-        authProvider.setCookies(context, authToken, csrfToken)
+        // A cookie session answers `csrfToken`; a front-end with a stored key gets `sessionToken` + `expiresAt` and no cookies.
+        val session = authProvider.issueSession(panoUsername, context, sqlClient)
 
-        return Successful(mapOf(
-            "action" to "login",
-            "csrfToken" to csrfToken,
-            "mcUsername" to mcUsername
-        ))
+        return Successful(
+            mapOf(
+                "action" to "login",
+                "mcUsername" to mcUsername
+            ) + session
+        )
     }
 
     /**
@@ -249,8 +288,9 @@ class MicrosoftProcessAPI(
                 sqlClient
             )
 
-            val websiteUrl = platformConfigManager.config.websiteUrl
-            val setUsernameLink = "$websiteUrl/set-username?token=$token"
+            // Target `premium-login.set-username` of the front-end URL map (frontend-targets.json).
+            val setUsernameLink = frontendUrlMap.url("premium-login.set-username", mapOf("token" to token))
+                ?: "${platformConfigManager.config.websiteUrl}/set-username?token=$token"
 
             val mail = UsernameChangeMail(
                 oldUsername = oldUsername,
@@ -301,7 +341,7 @@ class MicrosoftProcessAPI(
     ): Result {
         val isLoggedIn = authProvider.isLoggedIn(context)
         if (!isLoggedIn) {
-            return Successful(mapOf("error" to "You must be logged in to link your account."))
+            throw NotLoggedIn(extras = mapOf("message" to "You must be logged in to link your account."))
         }
 
         val userId = authProvider.getUserIdFromRoutingContext(context)
@@ -313,7 +353,7 @@ class MicrosoftProcessAPI(
         val existingByUuid = databaseManager.userDao.getByMcUuid(mcProfile.uuid, sqlClient)
         if (existingByUuid != null && existingByUuid.id != userId) {
             plugin.logger.warn("MC Link: UUID ${mcProfile.uuid} already linked to user '${existingByUuid.username}' (id=${existingByUuid.id})")
-            return Successful(mapOf("error" to "This Minecraft account is already linked to another user."))
+            throw MinecraftAccountAlreadyLinked("This Minecraft account is already linked to another user.", 409)
         }
 
         // Update the user's mcUuid

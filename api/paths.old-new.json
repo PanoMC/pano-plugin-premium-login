@@ -1,0 +1,138 @@
+[
+  {
+    "method": "GET",
+    "old": "/api/panel/premium-login/config",
+    "new": "/api/plugins/pano-plugin-premium-login/panel/config",
+    "relative": "/plugins/pano-plugin-premium-login/panel/config",
+    "class": "PanelGetPremiumLoginConfigAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/panel/PanelGetPremiumLoginConfigAPI.kt"
+  },
+  {
+    "method": "PUT",
+    "old": "/api/panel/premium-login/config",
+    "new": "/api/plugins/pano-plugin-premium-login/panel/config",
+    "relative": "/plugins/pano-plugin-premium-login/panel/config",
+    "class": "PanelUpdatePremiumLoginConfigAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/panel/PanelUpdatePremiumLoginConfigAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/panel/premium-login/config/reveal-secret",
+    "new": "/api/plugins/pano-plugin-premium-login/panel/config/reveal-secret",
+    "relative": "/plugins/pano-plugin-premium-login/panel/config/reveal-secret",
+    "class": "PanelRevealSecretAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/panel/PanelRevealSecretAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/panel/premium-login/player/:username",
+    "new": "/api/plugins/pano-plugin-premium-login/panel/player/:username",
+    "relative": "/plugins/pano-plugin-premium-login/panel/player/:username",
+    "class": "PanelGetPlayerPremiumStatusAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/panel/PanelGetPlayerPremiumStatusAPI.kt"
+  },
+  {
+    "method": "PUT",
+    "old": "/api/panel/premium-login/player/:username",
+    "new": "/api/plugins/pano-plugin-premium-login/panel/player/:username",
+    "relative": "/plugins/pano-plugin-premium-login/panel/player/:username",
+    "class": "PanelUpdatePlayerPremiumStatusAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/panel/PanelUpdatePlayerPremiumStatusAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/panel/premium-login/player/:username/unlink",
+    "new": "/api/plugins/pano-plugin-premium-login/panel/player/:username/unlink",
+    "relative": "/plugins/pano-plugin-premium-login/panel/player/:username/unlink",
+    "class": "PanelUnlinkPlayerPremiumAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/panel/PanelUnlinkPlayerPremiumAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/premium-login/config",
+    "new": "/api/plugins/pano-plugin-premium-login/config",
+    "relative": "/plugins/pano-plugin-premium-login/config",
+    "class": "GetPremiumLoginConfigPublicAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/GetPremiumLoginConfigPublicAPI.kt"
+  },
+  {
+    "method": "PUT",
+    "old": "/api/premium-login/me",
+    "new": "/api/plugins/pano-plugin-premium-login/me",
+    "relative": "/plugins/pano-plugin-premium-login/me",
+    "class": "UpdateOwnPremiumStatusAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/UpdateOwnPremiumStatusAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/premium-login/microsoft/callback",
+    "new": "/api/plugins/pano-plugin-premium-login/microsoft/callback",
+    "relative": "/plugins/pano-plugin-premium-login/microsoft/callback",
+    "class": "MicrosoftCallbackAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/MicrosoftCallbackAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/premium-login/microsoft/link",
+    "new": "/api/plugins/pano-plugin-premium-login/microsoft/link",
+    "relative": "/plugins/pano-plugin-premium-login/microsoft/link",
+    "class": "MicrosoftLinkInitAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/MicrosoftLinkInitAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/premium-login/microsoft/login",
+    "new": "/api/plugins/pano-plugin-premium-login/microsoft/login",
+    "relative": "/plugins/pano-plugin-premium-login/microsoft/login",
+    "class": "MicrosoftLoginInitAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/MicrosoftLoginInitAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/premium-login/microsoft/process",
+    "new": "/api/plugins/pano-plugin-premium-login/microsoft/process",
+    "relative": "/plugins/pano-plugin-premium-login/microsoft/process",
+    "class": "MicrosoftProcessAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/MicrosoftProcessAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/premium-login/microsoft/register",
+    "new": "/api/plugins/pano-plugin-premium-login/microsoft/register",
+    "relative": "/plugins/pano-plugin-premium-login/microsoft/register",
+    "class": "MicrosoftRegisterInitAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/MicrosoftRegisterInitAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/premium-login/microsoft/unlink",
+    "new": "/api/plugins/pano-plugin-premium-login/microsoft/unlink",
+    "relative": "/plugins/pano-plugin-premium-login/microsoft/unlink",
+    "class": "MicrosoftUnlinkAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/MicrosoftUnlinkAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/premium-login/player/:username",
+    "new": "/api/plugins/pano-plugin-premium-login/player/:username",
+    "relative": "/plugins/pano-plugin-premium-login/player/:username",
+    "class": "GetPlayerPremiumStatusAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/GetPlayerPremiumStatusAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/premium-login/set-username",
+    "new": "/api/plugins/pano-plugin-premium-login/set-username",
+    "relative": "/plugins/pano-plugin-premium-login/set-username",
+    "class": "SetUsernameAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/SetUsernameAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/premium-login/sync",
+    "new": "/api/plugins/pano-plugin-premium-login/sync",
+    "relative": "/plugins/pano-plugin-premium-login/sync",
+    "class": "UpdatePlayerPremiumStatusFromServerAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/premiumlogin/routes/api/UpdatePlayerPremiumStatusFromServerAPI.kt"
+  }
+]
