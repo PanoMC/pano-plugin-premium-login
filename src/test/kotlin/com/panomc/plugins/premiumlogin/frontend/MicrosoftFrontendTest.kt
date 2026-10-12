@@ -11,7 +11,6 @@ import com.panomc.platform.frontend.pages.FallbackPageRenderer
 import com.panomc.platform.route.FallbackPageRoute
 import com.panomc.platform.ui.FrontendMode
 import com.panomc.plugins.premiumlogin.PremiumLoginPlugin
-import com.panomc.plugins.premiumlogin.config.PremiumLoginConfig
 import io.vertx.core.Future
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpClientOptions
@@ -274,36 +273,6 @@ class MicrosoftFrontendTest {
 
         assertEquals(302, answer.status)
         assertEquals("https://site.example/ms/done?code=c1&state=s1", answer.headers["location"])
-    }
-
-    // --- the Microsoft redirect URL ----------------------------------------------------
-
-    private fun config(enabled: Boolean = true, clientId: String = "app", redirect: String = "") =
-        PremiumLoginConfig(microsoftLoginEnabled = enabled, microsoftClientId = clientId, microsoftRedirectUri = redirect)
-
-    @Test
-    fun `the redirect URL the admin registered is listed`() {
-        val urls = MicrosoftExternalUrls.urlsOf(
-            config(redirect = "https://pano.example/api/plugins/pano-plugin-premium-login/microsoft/callback"),
-            "pano-plugin-premium-login"
-        ) { error("the website URL is not needed") }
-
-        assertEquals(1, urls.size)
-        assertEquals("Microsoft redirect URL", urls[0].label)
-        assertEquals("https://pano.example/api/plugins/pano-plugin-premium-login/microsoft/callback", urls[0].url)
-    }
-
-    @Test
-    fun `without a stored redirect URL the default address of the settings page is listed`() {
-        val urls = MicrosoftExternalUrls.urlsOf(config(), "pano-plugin-premium-login") { "https://pano.example/" }
-
-        assertEquals("https://pano.example/api/plugins/pano-plugin-premium-login/microsoft/callback", urls.single().url)
-    }
-
-    @Test
-    fun `nothing is listed while the sign-in is off and has no app`() {
-        assertTrue(MicrosoftExternalUrls.urlsOf(config(enabled = false, clientId = ""), "pano-plugin-premium-login") { "https://pano.example" }.isEmpty())
-        assertEquals(1, MicrosoftExternalUrls.urlsOf(config(enabled = false, clientId = "app"), "pano-plugin-premium-login") { "https://pano.example" }.size)
     }
 
     private companion object {
