@@ -183,21 +183,8 @@ tasks {
         }
     }
 
-    register("installEmailDeps", Exec::class) {
-        dependsOn("installBun")
-        workingDir("email")
-        commandLine(bunBin.absolutePath, "install")
-    }
-
-    register("buildEmails", Exec::class) {
-        dependsOn("installEmailDeps")
-        workingDir("email")
-        commandLine(bunBin.absolutePath, "run", "build:handlebars")
-    }
-
     register("buildUI", Exec::class) {
         dependsOn("installBun")
-        dependsOn("buildEmails")
         println(bunBin.absolutePath)
         commandLine(bunBin.absolutePath, "run", "build")
     }
