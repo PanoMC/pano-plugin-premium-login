@@ -124,20 +124,6 @@
       "BAD_REQUEST": "This sign-in link is not valid. Start again from the sign-in page."
     }
   },
-  "mail": {
-    "username-change": {
-      "subject": "Your username has been changed on {websiteName}",
-      "title": "Username Change Required",
-      "hello": "Hello",
-      "body": "A Minecraft premium account has claimed the username you were using. Your username has been temporarily changed. Please set a new username by clicking the button below.",
-      "new-mc-username": "Minecraft username that claimed your name",
-      "button": "Set New Username",
-      "expiration-notice": "⏰ Expiration Notice",
-      "expiration-body": "This link will expire in 15 minutes. After that, you can log in with your email and password and set a new username.",
-      "alternative": "If you didn't expect this change, you can log in with your email and password. You will be prompted to set a new username.",
-      "footer": "If you have any questions, please contact our support team."
-    }
-  },
   "set-username": {
     "title": "Set Your Username",
     "description": "A Minecraft premium account has claimed your username. Please choose a new username to continue.",

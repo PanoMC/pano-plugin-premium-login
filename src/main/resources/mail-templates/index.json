@@ -1,0 +1,45 @@
+{
+  "mails": [
+    {
+      "key": "username-change",
+      "name": { "en-US": "Username change", "tr": "Kullanıcı adı değişikliği", "ru": "Смена имени пользователя" },
+      "description": {
+        "en-US": "Sent when a Minecraft premium account claims a user's username and the user has to pick a new one.",
+        "tr": "Bir Minecraft premium hesabı kullanıcının adını aldığında ve kullanıcının yeni bir ad seçmesi gerektiğinde gönderilir.",
+        "ru": "Отправляется, когда премиум-аккаунт Minecraft занимает имя пользователя и ему нужно выбрать новое."
+      },
+      "variants": [
+        {
+          "key": "default",
+          "name": { "en-US": "Default", "tr": "Varsayılan", "ru": "По умолчанию" },
+          "variables": [
+            {
+              "name": "oldUsername",
+              "type": "text",
+              "label": { "en-US": "Previous username", "tr": "Eski kullanıcı adı", "ru": "Прежнее имя пользователя" },
+              "sample": "Steve"
+            },
+            {
+              "name": "newMcUsername",
+              "type": "text",
+              "label": { "en-US": "Minecraft username that claimed the name", "tr": "Adı alan Minecraft kullanıcı adı", "ru": "Minecraft-имя, занявшее имя" },
+              "sample": "Steve"
+            },
+            {
+              "name": "setUsernameLink",
+              "type": "url",
+              "label": { "en-US": "Set username link", "tr": "Kullanıcı adı belirleme bağlantısı", "ru": "Ссылка для выбора имени" },
+              "sample": "https://example.com/set-username?token=abc"
+            },
+            {
+              "name": "expireMinutes",
+              "type": "number",
+              "label": { "en-US": "Link lifetime (minutes)", "tr": "Bağlantı süresi (dakika)", "ru": "Срок действия ссылки (минуты)" },
+              "sample": 15
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

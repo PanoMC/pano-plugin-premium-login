@@ -124,20 +124,6 @@
       "BAD_REQUEST": "Bu giriş bağlantısı geçerli değil. Giriş sayfasından yeniden başla."
     }
   },
-  "mail": {
-    "username-change": {
-      "subject": "{websiteName} üzerinde kullanıcı adınız değiştirildi",
-      "title": "Kullanıcı Adı Değişikliği Gerekli",
-      "hello": "Merhaba",
-      "body": "Bir Minecraft premium hesabı, kullandığınız kullanıcı adını talep etti. Kullanıcı adınız geçici olarak değiştirildi. Lütfen aşağıdaki butona tıklayarak yeni bir kullanıcı adı belirleyin.",
-      "new-mc-username": "Adınızı talep eden Minecraft kullanıcı adı",
-      "button": "Yeni Kullanıcı Adı Belirle",
-      "expiration-notice": "⏰ Süre Uyarısı",
-      "expiration-body": "Bu link 15 dakika içinde geçersiz olacaktır. Süre dolduktan sonra e-posta ve şifrenizle giriş yapıp yeni kullanıcı adı belirleyebilirsiniz.",
-      "alternative": "Bu değişikliği beklemiyorsanız, e-posta ve şifrenizle giriş yapabilirsiniz. Yeni bir kullanıcı adı belirlemeniz istenecektir.",
-      "footer": "Sorularınız varsa lütfen destek ekibimizle iletişime geçin."
-    }
-  },
   "set-username": {
     "title": "Kullanıcı Adı Belirle",
     "description": "Bir Minecraft premium hesabı kullanıcı adınızı talep ettiği için adınız değiştirildi. Devam etmek için lütfen yeni bir kullanıcı adı seçin.",

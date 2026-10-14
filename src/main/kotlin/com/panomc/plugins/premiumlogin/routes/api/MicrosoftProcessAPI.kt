@@ -295,11 +295,12 @@ class MicrosoftProcessAPI(
             val mail = UsernameChangeMail(
                 oldUsername = oldUsername,
                 newMcUsername = mcProfile.username,
-                setUsernameLink = setUsernameLink
+                setUsernameLink = setUsernameLink,
+                expireMinutes = ((expireDate - System.currentTimeMillis()).coerceAtLeast(0) + 59_999) / 60_000
             )
 
             try {
-                mailManager.sendMail(sqlClient, existingUser.id, mail)
+                mailManager.sendTemplate(sqlClient, existingUser.id, mail)
             } catch (e: Exception) {
                 plugin.logger.error("Failed to send username change email to ${existingUser.email}: ${e.message}", e)
             }
