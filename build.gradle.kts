@@ -1,11 +1,11 @@
-import java.net.URL
+import java.net.URI
 import java.util.Properties
 import java.util.zip.ZipFile
 
 plugins {
     kotlin("jvm") version "2.4.21"
     kotlin("kapt") version "2.4.21"
-    id("com.gradleup.shadow") version "8.3.8"
+    id("com.gradleup.shadow") version "9.6.1"
     `maven-publish`
 }
 
@@ -13,11 +13,10 @@ group = "com.panomc.plugins"
 version =
     (if (project.hasProperty("version") && project.findProperty("version") != "unspecified") project.findProperty("version") else "local-build")!!
 
-val pf4jVersion: String by project
-val vertxVersion: String by project
-val gsonVersion: String by project
-val handlebarsVersion: String by project
-val springContextVersion: String by project
+val pf4jVersion = property("pf4jVersion") as String
+val vertxVersion = property("vertxVersion") as String
+val gsonVersion = property("gsonVersion") as String
+val springContextVersion = property("springContextVersion") as String
 val bootstrap = (project.findProperty("bootstrap") as String?)?.toBoolean() ?: false
 val noui = project.hasProperty("noui")
 val pluginsDir: File? = runCatching { rootProject.extra["pluginsDir"] as? File }.getOrNull()
@@ -50,7 +49,7 @@ val bunDir = File(layout.buildDirectory.asFile.get().absolutePath, "bun")
 val bunBinDir = File(bunDir, bunPlatform)
 var bunBin = if (isWindows) File(bunBinDir, "bun.exe") else File(bunBinDir, "bun")
 
-val pluginId: String by project
+val pluginId = property("pluginId") as String
 
 // api-level (pano-api migrate-v1): "panoApiLevel" of the pano-web-platform tree this plugin is built in, else "current" from
 // the pano-api-level.properties inside the Pano jar on compileClasspath. `apiLevel=` in gradle.properties lowers it.
@@ -67,22 +66,22 @@ val panoApiLevel: String? by lazy {
         }
 }
 
-val pluginName: String by project
-val pluginDescription: String? by project
-val pluginPanoVersion: String by project
-val pluginClass: String by project
-val pluginDeveloper: String by project
-val pluginLicense: String? by project
-val pluginSourceUrl: String? by project
-val pluginDependencies: String? by project
-val pluginRequires: String? by project
+val pluginName = property("pluginName") as String
+val pluginDescription = findProperty("pluginDescription") as String?
+val pluginPanoVersion = property("pluginPanoVersion") as String
+val pluginClass = property("pluginClass") as String
+val pluginDeveloper = property("pluginDeveloper") as String
+val pluginLicense = findProperty("pluginLicense") as String?
+val pluginSourceUrl = findProperty("pluginSourceUrl") as String?
+val pluginDependencies = findProperty("pluginDependencies") as String?
+val pluginRequires = findProperty("pluginRequires") as String?
 
-val organization: String? by project
+val organization = findProperty("organization") as String?
 
 // MC plugin dependency versions
-val spigotApiVersion: String by project
-val bungeecordApiVersion: String by project
-val velocityApiVersion: String by project
+val spigotApiVersion = property("spigotApiVersion") as String
+val bungeecordApiVersion = property("bungeecordApiVersion") as String
+val velocityApiVersion = property("velocityApiVersion") as String
 
 repositories {
     mavenLocal()
@@ -99,7 +98,7 @@ repositories {
 
 dependencies {
     if (bootstrap) {
-        compileOnly(project(mapOf("path" to ":Pano")))
+        compileOnly(project(":Pano"))
     } else {
         compileOnly("com.github.panomc:pano:v1.0.0-alpha.560")
     }
@@ -108,12 +107,12 @@ dependencies {
     compileOnly("com.github.panomc.pano-mc-plugin:Core:v1.0.0-alpha.45")
 
     // Unit tests of the error classes (they extend the host's Error).
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.3")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.3")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.4")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.14.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.4")
     // The tests use the host's classes: the umbrella build takes the project, a standalone build the same Pano as above.
     if (bootstrap) {
-        testImplementation(project(mapOf("path" to ":Pano")))
+        testImplementation(project(":Pano"))
     } else {
         testImplementation("com.github.panomc:pano:v1.0.0-alpha.560")
     }
@@ -161,7 +160,7 @@ tasks {
                 val zipFile = File(bunDir, "$bunPlatform.zip")
                 zipFile.parentFile.mkdirs()
 
-                URL(bunUrl).openStream().use { input ->
+                URI(bunUrl).toURL().openStream().use { input ->
                     zipFile.outputStream().use { output ->
                         input.copyTo(output)
                     }
@@ -284,29 +283,40 @@ publishing {
 
     publications {
         create<MavenPublication>("shadow") {
-            project.extensions.configure<com.github.jengelman.gradle.plugins.shadow.ShadowExtension> {
-                artifactId = pluginId
-                component(this@create)
-            }
+            artifactId = pluginId
+            from(components["shadow"])
         }
     }
 }
 
+// The jar runs on Pano (Java 11) and its mc/ classes on Minecraft servers (Java 17+). It is compiled by a JDK 17 (the
+// server APIs on the classpath and kapt's javac need it) but emits Java 11 bytecode against the Java 11 API, so the Pano
+// side loads on JRE 11; the Pano side never touches the mc/ classes.
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(11)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        freeCompilerArgs.add("-Xjdk-release=11")
     }
 }
+
+configurations.named("compileClasspath") {
+    attributes { attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 17) }
+}
+
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
