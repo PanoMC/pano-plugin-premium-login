@@ -18,3 +18,6 @@ class MinecraftAccountAlreadyLinked(message: String? = null, statusCode: Int = 4
     Error("MINECRAFT_ACCOUNT_ALREADY_LINKED", statusCode, extras = messageExtras(message))
 
 class MinecraftAccountNotLinked : Error("MINECRAFT_ACCOUNT_NOT_LINKED", 409)
+
+/** Staff set this player's account type in the panel; the player cannot change it themselves. */
+class PremiumStatusSetByStaff : Error("PREMIUM_STATUS_SET_BY_STAFF", 403)

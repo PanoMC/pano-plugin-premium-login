@@ -13,6 +13,7 @@ class MicrosoftLoginErrorsTest {
         assertEquals(404, MinecraftAccountNotFound().getStatusCode())
         assertEquals(409, MinecraftAccountNotLinked().getStatusCode())
         assertEquals(403, InvalidPassword().getStatusCode())
+        assertEquals(403, PremiumStatusSetByStaff().getStatusCode())
     }
 
     @Test

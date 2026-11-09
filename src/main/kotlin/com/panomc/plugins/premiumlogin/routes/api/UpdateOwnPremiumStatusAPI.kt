@@ -6,6 +6,7 @@ import com.panomc.platform.db.DatabaseManager
 import com.panomc.platform.error.BadRequest
 import com.panomc.platform.model.*
 import com.panomc.plugins.premiumlogin.PremiumLoginPlugin
+import com.panomc.plugins.premiumlogin.error.PremiumStatusSetByStaff
 import com.panomc.plugins.premiumlogin.config.AccountType
 import com.panomc.plugins.premiumlogin.config.StatusSource
 import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
@@ -31,7 +32,7 @@ class UpdateOwnPremiumStatusAPI(
         summary = "Sets the account type (AUTO, PREMIUM or CRACKED) of the signed-in user.",
         tag = "player",
         response = objectSchema(),
-        errors = listOf(BadRequest::class)
+        errors = listOf(BadRequest::class, PremiumStatusSetByStaff::class)
     )
 
     private val authProvider by lazy {
@@ -70,11 +71,18 @@ class UpdateOwnPremiumStatusAPI(
         // Get existing status to preserve UUID if available
         val existing = playerPremiumStatusDao.getByPlayerName(username, sqlClient)
 
+        // A type staff set in the panel stays until staff change it.
+        if (existing?.source == StatusSource.PANEL.name) {
+            throw PremiumStatusSetByStaff()
+        }
+
         val status = PlayerPremiumStatus(
             playerUuid = existing?.playerUuid ?: "",
             playerName = username,
             accountType = accountType.name,
             source = StatusSource.USER.name,
+            // Changing the type does not touch a Microsoft link.
+            premiumLinked = existing?.premiumLinked ?: false,
             lastUpdated = System.currentTimeMillis()
         )
 
