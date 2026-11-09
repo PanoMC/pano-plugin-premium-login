@@ -37,6 +37,14 @@ class MicrosoftLinkInitAPI(
         plugin.pluginBeanContext.getBean(MicrosoftOAuthService::class.java)
     }
 
+    private val flowStore by lazy {
+        plugin.pluginBeanContext.getBean(com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore::class.java)
+    }
+
+    private val authProvider by lazy {
+        plugin.applicationContext.getBean(com.panomc.platform.auth.AuthProvider::class.java)
+    }
+
     override fun getValidationHandler(schemaRepository: SchemaRepository): ValidationHandler =
         ValidationHandlerBuilder.create(schemaRepository).build()
 
@@ -45,8 +53,8 @@ class MicrosoftLinkInitAPI(
             throw MicrosoftLoginNotEnabled()
         }
 
-        // State contains the action type
-        val state = Base64.getUrlEncoder().encodeToString("link".toByteArray())
+        // A random one-time state, bound to this browser and user (see MicrosoftFlowStore).
+        val state = flowStore.create("link", authProvider.getUserIdFromRoutingContext(context), context)
         val authUrl = oauthService.buildAuthorizationUrl(state)
 
         return Successful(mapOf("redirectUrl" to authUrl))

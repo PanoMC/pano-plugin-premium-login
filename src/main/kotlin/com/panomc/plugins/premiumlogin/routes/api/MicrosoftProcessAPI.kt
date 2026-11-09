@@ -72,6 +72,10 @@ class MicrosoftProcessAPI(
         plugin.applicationContext.getBean(AuthProvider::class.java)
     }
 
+    private val flowStore by lazy {
+        plugin.pluginBeanContext.getBean(com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore::class.java)
+    }
+
     private val tokenProvider by lazy {
         plugin.applicationContext.getBean(TokenProvider::class.java)
     }
@@ -126,15 +130,15 @@ class MicrosoftProcessAPI(
             throw BadRequest()
         }
 
-        val action = try {
-            String(Base64.getUrlDecoder().decode(stateRaw))
-        } catch (_: Exception) {
-            "login"
-        }
-
         if (!configManager.config.microsoftLoginEnabled) {
             throw MicrosoftLoginNotEnabled("Microsoft login is not enabled.", 400)
         }
+
+        // The state must be one this site handed out, to this browser, and not used yet. An unknown,
+        // expired or foreign state stops here, before the code is redeemed.
+        val flow = flowStore.consume(stateRaw, context)
+            ?: throw MicrosoftLoginFailed("This sign-in link is no longer valid. Start again from the sign-in page.", 400)
+        val action = flow.action
 
         // Exchange code for Minecraft profile
         val mcProfile = try {
@@ -159,7 +163,7 @@ class MicrosoftProcessAPI(
 
         // === LINK ACTION: Update existing logged-in user's mcUuid ===
         if (action == "link") {
-            return handleLinkAccount(context, mcProfile, sqlClient)
+            return handleLinkAccount(context, flow.userId, mcProfile, sqlClient)
         }
 
         // === SCENARIO ROUTING ===
@@ -337,6 +341,7 @@ class MicrosoftProcessAPI(
      */
     private suspend fun handleLinkAccount(
         context: RoutingContext,
+        flowUserId: Long?,
         mcProfile: com.panomc.plugins.premiumlogin.service.MicrosoftOAuthService.MinecraftProfile,
         sqlClient: io.vertx.sqlclient.SqlClient
     ): Result {
@@ -346,6 +351,11 @@ class MicrosoftProcessAPI(
         }
 
         val userId = authProvider.getUserIdFromRoutingContext(context)
+
+        // A link only lands on the account that started it.
+        if (flowUserId == null || flowUserId != userId) {
+            throw MicrosoftLoginFailed("This link was started from another account. Start again from your settings.", 400)
+        }
         val username = databaseManager.userDao.getUsernameFromUserId(userId, sqlClient)!!
 
         debugLog("MC Link: user='$username' (id=$userId) linking MC uuid=${mcProfile.uuid}, mcUsername=${mcProfile.username}")

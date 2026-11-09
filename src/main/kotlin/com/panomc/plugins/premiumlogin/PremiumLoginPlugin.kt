@@ -58,6 +58,10 @@ class PremiumLoginPlugin : PanoPlugin() {
         val vertx = applicationContext.getBean(Vertx::class.java)
         val oauthService = MicrosoftOAuthService(configManager, vertx)
         pluginBeanContext.beanFactory.registerSingleton(MicrosoftOAuthService::class.java.name, oauthService)
+        pluginBeanContext.beanFactory.registerSingleton(
+            com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore::class.java.name,
+            com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore()
+        )
 
         pluginDatabaseManager.initialize(this)
 

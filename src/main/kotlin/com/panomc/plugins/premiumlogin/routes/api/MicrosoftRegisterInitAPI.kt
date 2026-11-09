@@ -37,6 +37,10 @@ class MicrosoftRegisterInitAPI(
         plugin.pluginBeanContext.getBean(MicrosoftOAuthService::class.java)
     }
 
+    private val flowStore by lazy {
+        plugin.pluginBeanContext.getBean(com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore::class.java)
+    }
+
     override fun getValidationHandler(schemaRepository: SchemaRepository): ValidationHandler =
         ValidationHandlerBuilder.create(schemaRepository).build()
 
@@ -45,7 +49,8 @@ class MicrosoftRegisterInitAPI(
             throw MicrosoftLoginNotEnabled()
         }
 
-        val state = Base64.getUrlEncoder().encodeToString("register".toByteArray())
+        // A random one-time state, bound to this browser (see MicrosoftFlowStore).
+        val state = flowStore.create("register", null, context)
         val authUrl = oauthService.buildAuthorizationUrl(state)
 
         return Successful(mapOf("redirectUrl" to authUrl))
