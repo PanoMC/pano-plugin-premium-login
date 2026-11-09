@@ -5,7 +5,12 @@ import com.panomc.platform.api.config.PluginConfigManager
 import com.panomc.platform.auth.AuthProvider
 import com.panomc.platform.config.ConfigManager
 import com.panomc.platform.db.DatabaseManager
+import com.panomc.platform.api.event.AuthEventListener
 import com.panomc.platform.error.BadRequest
+import com.panomc.platform.error.IpIsBanned
+import com.panomc.platform.error.LoginUserIsBanned
+import com.panomc.platform.error.UsernameRequired
+import com.panomc.platform.util.BanUtil
 import com.panomc.platform.error.NotLoggedIn
 import com.panomc.platform.frontend.FrontendUrlMap
 import com.panomc.platform.mail.MailManager
@@ -52,8 +57,9 @@ class MicrosoftProcessAPI(
             objectSchema()
                 .requiredProperty("action", stringSchema())
                 .optionalProperty("mcUsername", stringSchema())
+                .optionalProperty("pendingToken", stringSchema())
         ),
-        errors = listOf(BadRequest::class, NotLoggedIn::class, MicrosoftLoginNotEnabled::class, MicrosoftLoginFailed::class, MinecraftAccountAlreadyLinked::class)
+        errors = listOf(BadRequest::class, NotLoggedIn::class, IpIsBanned::class, LoginUserIsBanned::class, UsernameRequired::class, MicrosoftLoginNotEnabled::class, MicrosoftLoginFailed::class, MinecraftAccountAlreadyLinked::class)
     )
 
     private val configManager by lazy {
@@ -167,6 +173,12 @@ class MicrosoftProcessAPI(
         }
 
         // === SCENARIO ROUTING ===
+        // A banned address signs in nowhere, and gets no new account either (same rule as the password sign-in).
+        val activeIpBan = databaseManager.bannedIpDao.getActiveByIp(authProvider.getRemoteIP(context), sqlClient)
+        if (activeIpBan != null) {
+            throw IpIsBanned(extras = mapOf("reason" to activeIpBan.reason, "bannedUntil" to activeIpBan.bannedUntil))
+        }
+
         debugLog("MC Login: username=${mcProfile.username}, uuid=${mcProfile.uuid}, email=${mcProfile.email}")
 
         // Check if a user with this premium UUID already exists
@@ -233,8 +245,37 @@ class MicrosoftProcessAPI(
         mcUsername: String,
         sqlClient: io.vertx.sqlclient.SqlClient
     ): Result {
+        val user = databaseManager.userDao.getByUsername(panoUsername, sqlClient)
+            ?: throw MicrosoftLoginFailed("Microsoft login failed.", 400)
+
+        if (BanUtil.isBanned(user)) {
+            throw LoginUserIsBanned(extras = mapOf("reason" to user.banMessage, "until" to user.bannedUntil))
+        }
+
+        // The same pre-login hooks as the password sign-in (two-factor and other checks of plugins). A step-up
+        // is finished through the core pending session (POST /api/v1/auth/complete-pending), which runs them again
+        // with the user's answer; no session is opened here.
+        when (val decision = authProvider.runOnBeforeLogin(user, context, sqlClient)) {
+            is AuthEventListener.LoginDecision.Deny -> {
+                val pendingToken = authProvider.createPendingSession(user.id, "premium-login:microsoft", sqlClient)
+
+                return Successful(
+                    mapOf(
+                        "action" to "complete-required",
+                        "pendingToken" to pendingToken,
+                        "mcUsername" to mcUsername
+                    )
+                )
+            }
+            is AuthEventListener.LoginDecision.RequireUsername ->
+                throw UsernameRequired(extras = mapOf("userId" to decision.userId))
+            else -> { /* proceed */ }
+        }
+
         // A cookie session answers `csrfToken`; a front-end with a stored key gets `sessionToken` + `expiresAt` and no cookies.
-        val session = authProvider.issueSession(panoUsername, context, sqlClient)
+        val session = authProvider.issueSession(user.username, context, sqlClient)
+        databaseManager.userDao.updateLastLoginDate(user.id, sqlClient)
+        authProvider.runOnAfterLogin(databaseManager.userDao.getById(user.id, sqlClient) ?: user, context, sqlClient)
 
         return Successful(
             mapOf(

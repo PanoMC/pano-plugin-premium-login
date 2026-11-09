@@ -6,6 +6,11 @@
     padding: 2rem 1rem;
   }
 
+  /* Hosts the login-content widgets of a step-up (they show their own overlay), never inline UI. */
+  .premium-login-microsoft-callback-page__slot-mount {
+    display: none;
+  }
+
   .premium-login-microsoft-callback-page__body {
     padding: 2rem;
   }
@@ -105,6 +110,14 @@
         {/if}
       </div>
     </div>
+    <div class="premium-login-microsoft-callback-page__slot-mount" aria-hidden="true">
+      {#each contentItems as item (item.id)}
+        {#if item.id !== 'login-form' && item.component && typeof item.component !== 'function'}
+          {@const Field = item.component.default || item.component}
+          <Field data={{ pageType: 'login' }} />
+        {/if}
+      {/each}
+    </div>
   </div>
 {/if}
 
@@ -117,7 +130,7 @@
     import { derived } from 'svelte/store';
     import { _ as i18n } from '@panomc/sdk/utils/language';
     import { pano } from '../state.js';
-    import {onMount} from 'svelte';
+    import {onMount, tick} from 'svelte';
     import {goto, invalidateAll} from '@panomc/sdk/svelte';
 
     // plugin translations: $_('key') reads plugins.pano-plugin-premium-login.key
@@ -135,6 +148,39 @@
   let callbackState = $state('loading');
   let errorMessage = $state('');
   let mcUsername = $state('');
+
+  // Login-content items of the active UI (e.g. auth-guard's two-factor prompt). Mounted (hidden) only while a
+  // sign-in waits for a step-up, so their fetch hooks can answer /api/v1/auth/complete-pending.
+  let contentItems = $state([]);
+  let contentUnsub = null;
+
+  $effect(() => {
+    return () => {
+      if (contentUnsub) contentUnsub();
+    };
+  });
+
+  // The account asks for more than the Microsoft sign-in (two-factor, …): finish through the core pending session.
+  async function completePending(pendingToken) {
+    if (pano?.ui?.auth?.login?.load) {
+      try {
+        await pano.ui.auth.login.load();
+        contentUnsub = pano.ui.auth.login.content.get().subscribe((items) => {
+          contentItems = items || [];
+        });
+      } catch (e) {
+        console.error('[pano-plugin-premium-login] Failed to load login content', e);
+      }
+    }
+    await tick();
+
+    const res = await fetch('/api/v1/auth/complete-pending', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pendingToken }),
+    });
+    return res.json();
+  }
 
   onMount(async () => {
     const url = new URL(window.location.href);
@@ -166,6 +212,16 @@
         callbackState = 'error';
         errorMessage = body.error.message || body.error.code;
         return;
+      }
+
+      if (body.action === 'complete-required') {
+        const completed = await completePending(body.pendingToken || '');
+        if (completed.error) {
+          callbackState = 'error';
+          errorMessage = completed.error.details?.reason || completed.error.message || completed.error.code;
+          return;
+        }
+        Object.assign(body, completed, { action: 'login' });
       }
 
       if (body.action === 'login' && inPanel) {

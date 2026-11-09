@@ -13,6 +13,7 @@
         "premium-login-microsoft-callback-page__link-success",
         "premium-login-microsoft-callback-page__login-error",
         "premium-login-microsoft-callback-page__shake",
+        "premium-login-microsoft-callback-page__slot-mount",
         "premium-login-microsoft-callback-page__title"
       ],
       "contract": 1,

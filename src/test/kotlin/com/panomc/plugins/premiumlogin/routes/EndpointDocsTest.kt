@@ -59,6 +59,7 @@ class EndpointDocsTest {
             doc.check(JsonObject().put("action", "login").put("mcUsername", "Steve").put("sessionToken", "eyJ").put("expiresAt", 1791400000000L))
         )
         assertEquals(emptyList<String>(), doc.check(JsonObject().put("action", "link").put("mcUsername", "Steve")))
+        assertEquals(emptyList<String>(), doc.check(JsonObject().put("action", "complete-required").put("pendingToken", "p").put("mcUsername", "Steve")))
         assertTrue(doc.check(JsonObject().put("csrfToken", "c")).isNotEmpty())
     }
 
