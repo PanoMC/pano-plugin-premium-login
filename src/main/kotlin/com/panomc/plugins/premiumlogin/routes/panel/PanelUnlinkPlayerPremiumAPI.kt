@@ -6,6 +6,7 @@ import com.panomc.platform.db.DatabaseManager
 import com.panomc.platform.error.NotFound
 import com.panomc.platform.model.*
 import com.panomc.plugins.premiumlogin.PremiumLoginPlugin
+import com.panomc.plugins.premiumlogin.service.PremiumUnlink
 import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
 import com.panomc.plugins.premiumlogin.db.model.PlayerPremiumStatus
 import com.panomc.plugins.premiumlogin.permission.ManagePremiumStatusPermission
@@ -35,6 +36,12 @@ class PanelUnlinkPlayerPremiumAPI(
         plugin.applicationContext.getBean(DatabaseManager::class.java)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private val unlinkConfigManager by lazy {
+        plugin.pluginBeanContext.getBean(com.panomc.platform.api.config.PluginConfigManager::class.java)
+            as com.panomc.platform.api.config.PluginConfigManager<com.panomc.plugins.premiumlogin.config.PremiumLoginConfig>
+    }
+
     override fun getValidationHandler(schemaRepository: SchemaRepository): ValidationHandler =
         ValidationHandlerBuilder.create(schemaRepository)
             .pathParameter(Parameters.param("username", stringSchema()))
@@ -54,24 +61,20 @@ class PanelUnlinkPlayerPremiumAPI(
         // Generate offline UUID
         val offlineUuid = UUID.nameUUIDFromBytes("OfflinePlayer:$username".toByteArray()).toString()
 
+        // The premium UUID that was linked, read before it is reset: the status row is stored under it.
+        val linkedMcUuid = databaseManager.userDao.getById(userId, sqlClient)?.mcUuid
+
         // Update user's mcUuid to offline UUID
         databaseManager.userDao.setMcUuidById(userId, offlineUuid, sqlClient)
 
         // Update premiumLinked to false in plugin table
-        val existingStatus = playerPremiumStatusDao.getByPlayerName(username, sqlClient)
-        if (existingStatus != null) {
-            playerPremiumStatusDao.upsertByPlayerName(
-                PlayerPremiumStatus(
-                    playerUuid = existingStatus.playerUuid,
-                    playerName = existingStatus.playerName,
-                    accountType = existingStatus.accountType,
-                    source = existingStatus.source,
-                    premiumLinked = false,
-                    lastUpdated = System.currentTimeMillis()
-                ),
-                sqlClient
-            )
-        }
+        PremiumUnlink.clearLink(
+            playerPremiumStatusDao,
+            linkedMcUuid,
+            username,
+            unlinkConfigManager.config.defaultAccountType,
+            sqlClient
+        )
 
         return Successful()
     }
