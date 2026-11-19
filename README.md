@@ -13,7 +13,8 @@
 
 Premium Login lets players who own Minecraft join your server without typing a password, while players on offline accounts still log in as usual. Players pick their account type on your website, and they can sign in or sign up there with their Minecraft account too. Your staff can see and change each player's status right from the panel.
 
-## ✨ Features
+<h3 align="center">Features</h3>
+
 - ⚡ **Auto-login for premium players**: Players with a paid Minecraft account join your server without a password.
 - 🔄 **Premium, cracked or automatic**: Each player chooses their account type, or lets the server detect it.
 - 🟩 **Sign in with Minecraft**: Players sign in or create an account on your website with their Minecraft account.
@@ -22,7 +23,7 @@ Premium Login lets players who own Minecraft join your server without typing a p
 - 🛠️ **Staff controls**: View, change or unlink a player's premium status from their player page.
 - 🌐 **Works on your network**: Supports Spigot, BungeeCord and Velocity servers with FastLogin.
 
-## 📸 Screenshots
+<h3 align="center">Screenshots</h3>
 
 <p align="center"><img src=".github/assets/player-settings.png" alt="Authentication status in the player's account settings" width="700" /></p>
 <p align="center"><i>Players choose how they join the server and link their premium account from their settings.</i></p>
@@ -30,13 +31,16 @@ Premium Login lets players who own Minecraft join your server without typing a p
 <p align="center"><img src=".github/assets/panel.png" alt="Premium Login settings in the Pano panel" width="900" /></p>
 <p align="center"><i>A step-by-step guide in the panel walks you through turning on Minecraft sign-in.</i></p>
 
-## 🚀 Get started
+<h3 align="center">Get started</h3>
+
 1. Open your Pano panel and go to **Addons**.
 2. Find **Premium Login** and click **Install**.
 3. Install the plugin on your Minecraft server next to FastLogin, then open the addon's **Settings** tab to turn on Minecraft sign-in.
 
-## 💬 Support
+<h3 align="center">Support</h3>
+
 Questions or ideas? Join our [Discord](https://panomc.com/discord) or visit [panomc.com](https://panomc.com).
 
-## 📄 License
+<h3 align="center">License</h3>
+
 Released under the MIT License.
