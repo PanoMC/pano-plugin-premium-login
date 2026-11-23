@@ -11,7 +11,7 @@ import com.panomc.plugins.premiumlogin.db.dao.PlayerPremiumStatusDao
 import com.panomc.plugins.premiumlogin.event.server.GetPlayerPremiumStatusEvent
 import com.panomc.plugins.premiumlogin.event.server.UpdatePlayerPremiumStatusEvent
 import com.panomc.plugins.premiumlogin.service.MicrosoftOAuthService
-import io.vertx.core.Vertx
+import io.vertx.ext.web.client.WebClient
 
 class PremiumLoginPlugin : PanoPlugin() {
     private val pluginDatabaseManager by lazy {
@@ -51,24 +51,42 @@ class PremiumLoginPlugin : PanoPlugin() {
 
         isInitialized = true
 
-        val configManager = PluginConfigManager(this, PremiumLoginConfig::class.java)
-        pluginBeanContext.beanFactory.registerSingleton(PluginConfigManager::class.java.name, configManager)
+        try {
+            val configManager = registerIfAbsent(PluginConfigManager::class.java.name) {
+                PluginConfigManager(this, PremiumLoginConfig::class.java)
+            }
 
-        // Register Microsoft OAuth service
-        val vertx = applicationContext.getBean(Vertx::class.java)
-        val oauthService = MicrosoftOAuthService(configManager, vertx)
-        pluginBeanContext.beanFactory.registerSingleton(MicrosoftOAuthService::class.java.name, oauthService)
-        pluginBeanContext.beanFactory.registerSingleton(
-            com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore::class.java.name,
-            com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore()
-        )
+            // Register Microsoft OAuth service
+            registerIfAbsent(MicrosoftOAuthService::class.java.name) {
+                MicrosoftOAuthService(configManager, applicationContext.getBean(WebClient::class.java))
+            }
+            registerIfAbsent(com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore::class.java.name) {
+                com.panomc.plugins.premiumlogin.service.MicrosoftFlowStore()
+            }
 
-        pluginDatabaseManager.initialize(this)
+            pluginDatabaseManager.initialize(this)
+        } catch (e: Throwable) {
+            // Leave the plugin startable again: a later start retries instead of returning early.
+            isInitialized = false
+            throw e
+        }
 
         // Register WebSocket event handlers for MC plugin communication
         registerServerEvents()
 
         logger.info("Started!")
+    }
+
+    /**
+     * Registers [create]'s bean under [name] unless a previous (possibly failed) start already did, so a retry
+     * does not fail on an existing singleton.
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> registerIfAbsent(name: String, create: () -> T): T {
+        val beanFactory = pluginBeanContext.beanFactory
+        if (beanFactory.containsSingleton(name)) return beanFactory.getSingleton(name) as T
+
+        return create().also { beanFactory.registerSingleton(name, it) }
     }
 
     private fun registerServerEvents() {

@@ -2,17 +2,16 @@ package com.panomc.plugins.premiumlogin.service
 
 import com.panomc.platform.api.config.PluginConfigManager
 import com.panomc.plugins.premiumlogin.config.PremiumLoginConfig
-import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.client.WebClient
-import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.kotlin.coroutines.coAwait
 import java.net.URLEncoder
 
 class MicrosoftOAuthService(
     private val configManager: PluginConfigManager<PremiumLoginConfig>,
-    private val vertx: Vertx
+    // Core's shared client: never closed here, the host owns it.
+    private val webClient: WebClient
 ) {
     companion object {
         private const val MICROSOFT_AUTH_URL = "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"
@@ -30,10 +29,6 @@ class MicrosoftOAuthService(
         val username: String,
         val email: String? = null
     )
-
-    private val webClient by lazy {
-        WebClient.create(vertx, WebClientOptions().setSsl(true).setTrustAll(false))
-    }
 
     fun buildAuthorizationUrl(state: String): String {
         val config = configManager.config
