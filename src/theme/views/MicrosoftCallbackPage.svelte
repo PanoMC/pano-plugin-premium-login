@@ -149,6 +149,20 @@
   let errorMessage = $state('');
   let mcUsername = $state('');
 
+  /** `key` translated, or null when the plugin has no such key. */
+  function translated(key) {
+    const text = $_(key);
+    return text && text !== `plugins.pano-plugin-premium-login.${key}` ? text : null;
+  }
+
+  /** The visitor's text for an API error: its reason code, then its code, else the generic failure. */
+  function errorText(error) {
+    const reason = error?.details?.reason;
+    return (reason && translated(`microsoft.errors.${reason}`))
+      || (error?.code && translated(`fallback.errors.${error.code}`))
+      || $_('fallback.errors.MICROSOFT_LOGIN_FAILED');
+  }
+
   // Login-content items of the active UI (e.g. auth-guard's two-factor prompt). Mounted (hidden) only while a
   // sign-in waits for a step-up, so their fetch hooks can answer /api/v1/auth/complete-pending.
   let contentItems = $state([]);
@@ -190,13 +204,15 @@
 
     if (errorParam) {
       callbackState = 'error';
-      errorMessage = url.searchParams.get('error_description') || errorParam;
+      // Microsoft's own description is English: keep it in the console only.
+      console.error('[pano-plugin-premium-login] Microsoft sign-in error:', errorParam, url.searchParams.get('error_description'));
+      errorMessage = $_('fallback.errors.MICROSOFT_LOGIN_FAILED');
       return;
     }
 
     if (!code) {
       callbackState = 'error';
-      errorMessage = 'No authorization code received.';
+      errorMessage = $_('microsoft.no-code');
       return;
     }
 
@@ -210,7 +226,7 @@
 
       if (body.error) {
         callbackState = 'error';
-        errorMessage = body.error.message || body.error.code;
+        errorMessage = errorText(body.error);
         return;
       }
 
@@ -218,7 +234,7 @@
         const completed = await completePending(body.pendingToken || '');
         if (completed.error) {
           callbackState = 'error';
-          errorMessage = completed.error.details?.reason || completed.error.message || completed.error.code;
+          errorMessage = errorText(completed.error);
           return;
         }
         Object.assign(body, completed, { action: 'login' });
@@ -250,7 +266,7 @@
     } catch (e) {
       console.error('[pano-plugin-premium-login] Process error:', e);
       callbackState = 'error';
-      errorMessage = 'Connection error';
+      errorMessage = $_('set-username.error.CONNECTION_ERROR');
     }
   });
 </script>

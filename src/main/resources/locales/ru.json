@@ -7,18 +7,18 @@
   "panel-edit": {
     "title": "Статус аутентификации",
     "desc": "Тип аккаунта: премиум или пиратский.",
-    "source-info": "Последнее обновление: {source}"
+    "source-info": "Кем изменено: {source, select, PANEL {Панель} SERVER {Сервер} FASTLOGIN {FastLogin} USER {Игрок} MICROSOFT {Microsoft} other {{source}}}"
   },
   "sidebar": {
     "title": "Статус аутентификации",
-    "source": "Источник: {source}",
+    "source": "Источник: {source, select, PANEL {Панель} SERVER {Сервер} FASTLOGIN {FastLogin} USER {Игрок} MICROSOFT {Microsoft} other {{source}}}",
     "account-type": "Тип аккаунта",
     "link-status": "Премиум привязка",
     "linked": "Привязан",
     "not-linked": "Не привязан",
     "unlink-button": "Отвязать",
     "will-unlink": "Будет отвязан",
-    "undo": "Отмена"
+    "undo": "Вернуть"
   },
   "settings": {
     "title": "Статус аутентификации",
@@ -43,21 +43,32 @@
     "divider": "или",
     "login-loading": "Подключение к Microsoft...",
     "login-error": "Ошибка входа Microsoft. Пожалуйста, попробуйте снова.",
-    "login-not-enabled": "Вход через Microsoft не включён.",
+    "login-not-enabled": "Вход через Microsoft не включен.",
     "account-not-linked": "К этому аккаунту Minecraft не привязан аккаунт Pano. Пожалуйста, сначала зарегистрируйтесь.",
     "account-already-linked": "Аккаунт Pano с таким именем пользователя Minecraft уже существует.",
-    "verified": "Аккаунт Minecraft подтверждён: {username}",
-    "login-success": "Выполнен вход с аккаунтом Minecraft premium: {username}",
+    "verified": "Аккаунт Minecraft подтвержден: {username}",
+    "login-success": "Выполнен вход с премиум-аккаунтом Minecraft: {username}",
     "link-success": "Премиум-аккаунт привязан: {username}",
     "redirecting": "Перенаправление...",
     "back-to-login": "Вернуться к входу",
-    "no-panel-access": "У этой учётной записи нет доступа к панели управления."
+    "no-panel-access": "У этого аккаунта нет доступа к панели управления.",
+    "no-code": "Microsoft не передал код входа. Начните заново со страницы входа.",
+    "errors": {
+      "XBOX_NO_ACCOUNT": "У этого аккаунта Microsoft нет профиля Xbox. Создайте его на xbox.com и попробуйте снова.",
+      "XBOX_COUNTRY": "Xbox Live недоступен в стране этого аккаунта.",
+      "XBOX_ADULT_VERIFICATION": "Для входа этому аккаунту нужно пройти проверку возраста на xbox.com.",
+      "XBOX_CHILD": "Это детский аккаунт. Сначала взрослый должен добавить его в семью Microsoft.",
+      "NO_MINECRAFT": "На этом аккаунте Microsoft нет Minecraft.",
+      "STATE_INVALID": "Эта ссылка для входа больше недействительна. Начните заново со страницы входа.",
+      "OTHER_ACCOUNT": "Эта ссылка была открыта из другого аккаунта. Начните заново из настроек."
+    }
   },
   "plugin-settings": {
     "title": "Настройки входа через Microsoft",
     "setup-guide-title": "Как настроить вход через Microsoft",
+    "app-registrations": "Регистрация приложений",
     "setup-step-1": "— нажмите Новая регистрация.",
-    "setup-step-2": "Укажите имя для приложения, выберите 'Только личные учётные записи Microsoft'.",
+    "setup-step-2": "Укажите имя для приложения, выберите 'Только личные учетные записи Microsoft'.",
     "setup-step-3": "В разделе URI перенаправления выберите 'Web' и введите URI перенаправления, указанный ниже.",
     "setup-step-4": "После регистрации скопируйте Идентификатор приложения (клиента) и вставьте в поле Client ID.",
     "setup-step-5": "Перейдите в Сертификаты и секреты → Новый секрет клиента. Скопируйте значение и вставьте в поле Client Secret.",
@@ -69,6 +80,9 @@
     "client-secret": "Секретный ключ клиента (Client Secret)",
     "client-secret-desc": "Значение секрета из Azure Portal → Сертификаты и секреты.",
     "client-secret-new-placeholder": "Введите новый секретный ключ",
+    "edit-secret": "Изменить секретный ключ",
+    "toggle-secret": "Показать или скрыть секретный ключ",
+    "cancel-edit": "Отменить изменение",
     "reveal-desc": "Введите пароль, чтобы увидеть секретный ключ.",
     "reveal-password-placeholder": "Ваш пароль",
     "reveal-cancel": "Отмена",
@@ -83,23 +97,23 @@
   },
   "permissions": {
     "MANAGE_PREMIUM_STATUS": {
-      "title": "Управление статусом премиум",
+      "title": "Управление премиум-статусом",
       "description": "Возможность просматривать и изменять статус аутентификации игрока (Премиум/Пиратский) на странице деталей игрока."
     },
     "MANAGE_PREMIUM_LOGIN_SETTINGS": {
       "title": "Управление настройками Premium Login",
-      "description": "Возможность настраивать параметры Microsoft OAuth для плагина Premium Login."
+      "description": "Возможность настраивать параметры Microsoft OAuth для аддона Premium Login."
     }
   },
   "activity-logs": {
-    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> изменил(а) статус аутентификации игрока <b>{targetUsername}</b> на <b>{newAccountType}</b>.",
-    "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> обновил(а) настройки плагина Premium Login."
+    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> изменил(а) статус аутентификации игрока <b>{targetUsername}</b> на <b>{newAccountType, select, PREMIUM {Премиум} CRACKED {Пиратский} other {Автоматический}}</b>.",
+    "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> обновил(а) настройки аддона Premium Login."
   },
   "fallback": {
     "set-username": {
       "title": "Выберите новое имя пользователя",
       "heading": "Выберите новое имя пользователя",
-      "lead": "Ваше имя пользователя заняла премиум-учётная запись Minecraft. Выберите новое имя, чтобы продолжить.",
+      "lead": "Ваше имя пользователя занял премиум-аккаунт Minecraft. Выберите новое имя, чтобы продолжить.",
       "username": "Новое имя пользователя",
       "button": "Сохранить",
       "done": "Имя пользователя обновлено. Теперь вы можете войти с ним."
@@ -118,7 +132,7 @@
       "REGISTER_USERNAME_TOO_LONG": "Имя пользователя слишком длинное.",
       "REGISTER_INVALID_USERNAME": "Имя пользователя содержит недопустимые символы.",
       "REGISTER_USERNAME_NOT_AVAILABLE": "Это имя пользователя уже занято.",
-      "MICROSOFT_LOGIN_NOT_ENABLED": "Вход через Microsoft на этом сайте отключён.",
+      "MICROSOFT_LOGIN_NOT_ENABLED": "Вход через Microsoft на этом сайте отключен.",
       "MICROSOFT_LOGIN_FAILED": "Не удалось войти через Microsoft. Начните заново со страницы входа.",
       "MINECRAFT_ACCOUNT_ALREADY_LINKED": "Этот аккаунт Minecraft уже привязан к другому пользователю.",
       "BAD_REQUEST": "Эта ссылка для входа недействительна. Начните заново со страницы входа."
@@ -126,19 +140,20 @@
   },
   "set-username": {
     "title": "Установите имя пользователя",
-    "description": "Учётная запись Minecraft Premium заняла ваше имя пользователя. Пожалуйста, выберите новое имя для продолжения.",
+    "description": "Премиум-аккаунт Minecraft занял ваше имя пользователя. Выберите новое имя, чтобы продолжить.",
     "input-label": "Новое имя пользователя",
     "save": "Сохранить",
-    "saving": "Сохранение",
+    "saving": "Сохранение...",
     "success": "Имя пользователя успешно обновлено! Теперь вы можете войти с новым именем.",
     "go-to-login": "Перейти к входу",
     "error": {
       "REGISTER_USERNAME_NOT_AVAILABLE": "Это имя пользователя уже занято. Пожалуйста, выберите другое.",
       "REGISTER_USERNAME_TOO_SHORT": "Имя пользователя должно содержать не менее 3 символов.",
       "REGISTER_USERNAME_TOO_LONG": "Имя пользователя должно содержать не более 16 символов.",
-      "REGISTER_INVALID_USERNAME": "Имя пользователя может содержать только буквы, цифры и подчёркивания.",
-      "INVALID_TOKEN": "Недействительная или просроченная ссылка. Войдите через email, чтобы установить новое имя.",
-      "CONNECTION_ERROR": "Ошибка соединения. Пожалуйста, попробуйте ещё раз."
+      "REGISTER_INVALID_USERNAME": "Имя пользователя может содержать только буквы, цифры и подчеркивания.",
+      "INVALID_TOKEN": "Недействительная или просроченная ссылка. Войдите через e-mail, чтобы установить новое имя.",
+      "CONNECTION_ERROR": "Ошибка соединения. Пожалуйста, попробуйте еще раз.",
+      "UNKNOWN": "Что-то пошло не так. Попробуйте еще раз."
     }
   }
 }

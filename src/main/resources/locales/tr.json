@@ -7,11 +7,11 @@
   "panel-edit": {
     "title": "Kimlik Doğrulama Durumu",
     "desc": "Premium veya korsan hesap türü.",
-    "source-info": "Son güncelleyen: {source}"
+    "source-info": "Son güncelleyen: {source, select, PANEL {Panel} SERVER {Sunucu} FASTLOGIN {FastLogin} USER {Oyuncu} MICROSOFT {Microsoft} other {{source}}}"
   },
   "sidebar": {
     "title": "Kimlik Doğrulama Durumu",
-    "source": "Kaynak: {source}",
+    "source": "Kaynak: {source, select, PANEL {Panel} SERVER {Sunucu} FASTLOGIN {FastLogin} USER {Oyuncu} MICROSOFT {Microsoft} other {{source}}}",
     "account-type": "Hesap Türü",
     "link-status": "Premium Bağlantı",
     "linked": "Bağlı",
@@ -51,11 +51,22 @@
     "link-success": "Premium hesap bağlandı: {username}",
     "redirecting": "Yönlendiriliyorsunuz...",
     "back-to-login": "Giriş Sayfasına Dön",
-    "no-panel-access": "Bu hesabın yönetim paneline erişimi yok."
+    "no-panel-access": "Bu hesabın yönetim paneline erişimi yok.",
+    "no-code": "Microsoft bir giriş kodu göndermedi. Giriş sayfasından yeniden başlayın.",
+    "errors": {
+      "XBOX_NO_ACCOUNT": "Bu Microsoft hesabının Xbox profili yok. xbox.com üzerinden oluşturup tekrar deneyin.",
+      "XBOX_COUNTRY": "Xbox Live bu hesabın ülkesinde kullanılamıyor.",
+      "XBOX_ADULT_VERIFICATION": "Bu hesabın giriş yapabilmesi için xbox.com üzerinde yetişkin doğrulaması gerekiyor.",
+      "XBOX_CHILD": "Bu bir çocuk hesabı. Önce bir yetişkinin onu bir Microsoft ailesine eklemesi gerekiyor.",
+      "NO_MINECRAFT": "Bu Microsoft hesabında Minecraft yok.",
+      "STATE_INVALID": "Bu giriş bağlantısı artık geçerli değil. Giriş sayfasından yeniden başlayın.",
+      "OTHER_ACCOUNT": "Bu bağlantı başka bir hesaptan başlatıldı. Ayarlarınızdan yeniden başlayın."
+    }
   },
   "plugin-settings": {
     "title": "Microsoft Giriş Ayarları",
     "setup-guide-title": "Microsoft Girişi nasıl kurulur",
+    "app-registrations": "Uygulama kayıtları",
     "setup-step-1": "— Yeni kayıt'a tıklayın.",
     "setup-step-2": "Uygulamanız için bir ad belirleyin, hesap türü olarak 'Yalnızca kişisel Microsoft hesapları' seçin.",
     "setup-step-3": "Yönlendirme URI'si altında 'Web' seçin ve aşağıda gösterilen Yönlendirme URI'sini girin.",
@@ -69,6 +80,9 @@
     "client-secret": "İstemci Gizli Anahtarı (Client Secret)",
     "client-secret-desc": "Azure Portal → Sertifikalar ve Gizli Anahtarlar'dan gizli anahtar değeri.",
     "client-secret-new-placeholder": "Yeni gizli anahtar girin",
+    "edit-secret": "Gizli anahtarı düzenle",
+    "toggle-secret": "Gizli anahtarı göster veya gizle",
+    "cancel-edit": "Düzenlemeyi iptal et",
     "reveal-desc": "Gizli anahtarı görmek için şifrenizi girin.",
     "reveal-password-placeholder": "Şifreniz",
     "reveal-cancel": "İptal",
@@ -92,36 +106,36 @@
     }
   },
   "activity-logs": {
-    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b>, <b>{targetUsername}</b> oyuncusunun kimlik doğrulama durumunu <b>{newAccountType}</b> olarak değiştirdi.",
+    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b>, <b>{targetUsername}</b> oyuncusunun kimlik doğrulama durumunu <b>{newAccountType, select, PREMIUM {Premium} CRACKED {Korsan} other {Otomatik}}</b> olarak değiştirdi.",
     "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> Premium Login eklenti ayarlarını güncelledi."
   },
   "fallback": {
     "set-username": {
-      "title": "Yeni kullanıcı adı seç",
-      "heading": "Yeni kullanıcı adı seç",
-      "lead": "Bir Minecraft premium hesabı kullanıcı adını talep etti. Devam etmek için yeni bir kullanıcı adı seç.",
+      "title": "Yeni kullanıcı adı seçin",
+      "heading": "Yeni kullanıcı adı seçin",
+      "lead": "Bir Minecraft premium hesabı kullanıcı adınızı aldı. Devam etmek için yeni bir kullanıcı adı seçin.",
       "username": "Yeni kullanıcı adı",
       "button": "Kaydet",
-      "done": "Kullanıcı adın güncellendi. Şimdi onunla giriş yapabilirsin."
+      "done": "Kullanıcı adınız güncellendi. Artık onunla giriş yapabilirsiniz."
     },
     "callback": {
-      "title": "Minecraft ile giriş yap",
+      "title": "Minecraft ile giriş yapın",
       "heading": "Giriş yapılıyor",
-      "lead": "Microsoft ile girişin tamamlanıyor.",
-      "done": "Minecraft hesabınla giriş yaptın.",
+      "lead": "Microsoft ile girişiniz tamamlanıyor.",
+      "done": "Minecraft hesabınızla giriş yaptınız.",
       "continue": "Devam et",
-      "invalid": "Bu giriş bağlantısı geçerli değil. Giriş sayfasından yeniden başla."
+      "invalid": "Bu giriş bağlantısı geçerli değil. Giriş sayfasından yeniden başlayın."
     },
     "errors": {
-      "INVALID_TOKEN": "Bu bağlantı geçerli değil ya da süresi dolmuş. Yenisini iste.",
+      "INVALID_TOKEN": "Bu bağlantı geçerli değil ya da süresi dolmuş. Yenisini isteyin.",
       "REGISTER_USERNAME_TOO_SHORT": "Kullanıcı adı çok kısa.",
       "REGISTER_USERNAME_TOO_LONG": "Kullanıcı adı çok uzun.",
       "REGISTER_INVALID_USERNAME": "Kullanıcı adı izin verilmeyen karakterler içeriyor.",
       "REGISTER_USERNAME_NOT_AVAILABLE": "Bu kullanıcı adı zaten alınmış.",
       "MICROSOFT_LOGIN_NOT_ENABLED": "Microsoft ile giriş bu sitede açık değil.",
-      "MICROSOFT_LOGIN_FAILED": "Microsoft ile giriş yapılamadı. Giriş sayfasından yeniden başla.",
+      "MICROSOFT_LOGIN_FAILED": "Microsoft ile giriş yapılamadı. Giriş sayfasından yeniden başlayın.",
       "MINECRAFT_ACCOUNT_ALREADY_LINKED": "Bu Minecraft hesabı başka bir kullanıcıya bağlı.",
-      "BAD_REQUEST": "Bu giriş bağlantısı geçerli değil. Giriş sayfasından yeniden başla."
+      "BAD_REQUEST": "Bu giriş bağlantısı geçerli değil. Giriş sayfasından yeniden başlayın."
     }
   },
   "set-username": {
@@ -129,7 +143,7 @@
     "description": "Bir Minecraft premium hesabı kullanıcı adınızı talep ettiği için adınız değiştirildi. Devam etmek için lütfen yeni bir kullanıcı adı seçin.",
     "input-label": "Yeni Kullanıcı Adı",
     "save": "Kaydet",
-    "saving": "Kaydediliyor",
+    "saving": "Kaydediliyor...",
     "success": "Kullanıcı adı başarıyla güncellendi! Artık yeni kullanıcı adınızla giriş yapabilirsiniz.",
     "go-to-login": "Giriş Sayfasına Git",
     "error": {
@@ -138,7 +152,8 @@
       "REGISTER_USERNAME_TOO_LONG": "Kullanıcı adı en fazla 16 karakter olmalıdır.",
       "REGISTER_INVALID_USERNAME": "Kullanıcı adı yalnızca harf, rakam ve alt çizgi içerebilir.",
       "INVALID_TOKEN": "Geçersiz veya süresi dolmuş bağlantı. Yeni kullanıcı adı belirlemek için e-postanızla giriş yapın.",
-      "CONNECTION_ERROR": "Bağlantı hatası. Lütfen tekrar deneyin."
+      "CONNECTION_ERROR": "Bağlantı hatası. Lütfen tekrar deneyin.",
+      "UNKNOWN": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
     }
   }
 }

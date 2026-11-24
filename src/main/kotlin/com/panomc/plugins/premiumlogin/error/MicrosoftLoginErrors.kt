@@ -9,8 +9,12 @@ private fun messageExtras(message: String?): Map<String, Any?> =
 class MicrosoftLoginNotEnabled(message: String? = null, statusCode: Int = 409) :
     Error("MICROSOFT_LOGIN_NOT_ENABLED", statusCode, extras = messageExtras(message))
 
-class MicrosoftLoginFailed(message: String? = null, statusCode: Int = 400) :
-    Error("MICROSOFT_LOGIN_FAILED", statusCode, extras = messageExtras(message))
+/**
+ * [reason] is a stable code (`XBOX_NO_ACCOUNT`, `NO_MINECRAFT`, `STATE_INVALID`, …) sent as `error.details.reason`;
+ * the UI translates it. No text goes to the caller, so a provider's answer never reaches the visitor.
+ */
+class MicrosoftLoginFailed(reason: String? = null, statusCode: Int = 400) :
+    Error("MICROSOFT_LOGIN_FAILED", statusCode, extras = if (reason == null) mapOf() else mapOf("reason" to reason))
 
 class MinecraftAccountNotFound : Error("MINECRAFT_ACCOUNT_NOT_FOUND", 404)
 

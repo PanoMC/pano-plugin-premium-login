@@ -8,7 +8,7 @@
       <div class="alert alert-info mb-4">
         <h6 class="alert-heading mb-2"><i class="fas fa-info-circle me-1"></i> {$_('plugin-settings.setup-guide-title')}</h6>
         <ol class="mb-2 ps-3">
-          <li><a href="https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank" rel="noopener">Azure Portal → App Registrations</a> {$_('plugin-settings.setup-step-1')}</li>
+          <li><a href="https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank" rel="noopener">Azure Portal → {$_('plugin-settings.app-registrations')}</a> {$_('plugin-settings.setup-step-1')}</li>
           <li>{$_('plugin-settings.setup-step-2')}</li>
           <li>{$_('plugin-settings.setup-step-3')}</li>
           <li>{$_('plugin-settings.setup-step-4')}</li>
@@ -88,7 +88,7 @@
                 <button
                   class="btn btn-outline-primary btn-sm"
                   type="button"
-                  aria-label="Edit secret"
+                  aria-label={$_('plugin-settings.edit-secret')}
                   on:click={() => { editingSecret = true; config.microsoftClientSecret = ''; }}>
                   <i class="fas fa-edit"></i>
                 </button>
@@ -105,7 +105,7 @@
                 <button
                   class="btn btn-outline-secondary"
                   type="button"
-                  aria-label="Toggle secret visibility"
+                  aria-label={$_('plugin-settings.toggle-secret')}
                   on:click={() => showSecret = !showSecret}>
                   <i class="fas {showSecret ? 'fa-eye-slash' : 'fa-eye'}"></i>
                 </button>
@@ -113,7 +113,7 @@
                   <button
                     class="btn btn-outline-danger"
                     type="button"
-                    aria-label="Cancel edit"
+                    aria-label={$_('plugin-settings.cancel-edit')}
                     on:click={() => { editingSecret = false; config.microsoftClientSecret = ''; }}>
                     <i class="fas fa-times"></i>
                   </button>

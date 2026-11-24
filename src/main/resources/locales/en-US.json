@@ -7,11 +7,11 @@
   "panel-edit": {
     "title": "Authentication Status",
     "desc": "Premium or cracked account type.",
-    "source-info": "Last updated by: {source}"
+    "source-info": "Last updated by: {source, select, PANEL {Panel} SERVER {Server} FASTLOGIN {FastLogin} USER {Player} MICROSOFT {Microsoft} other {{source}}}"
   },
   "sidebar": {
     "title": "Authentication Status",
-    "source": "Source: {source}",
+    "source": "Source: {source, select, PANEL {Panel} SERVER {Server} FASTLOGIN {FastLogin} USER {Player} MICROSOFT {Microsoft} other {{source}}}",
     "account-type": "Account Type",
     "link-status": "Premium Link",
     "linked": "Linked",
@@ -51,11 +51,22 @@
     "link-success": "Premium account linked: {username}",
     "redirecting": "Redirecting...",
     "back-to-login": "Back to Login",
-    "no-panel-access": "This account has no access to the management panel."
+    "no-panel-access": "This account has no access to the management panel.",
+    "no-code": "Microsoft did not send a sign-in code. Start again from the sign-in page.",
+    "errors": {
+      "XBOX_NO_ACCOUNT": "This Microsoft account has no Xbox profile. Create one at xbox.com and try again.",
+      "XBOX_COUNTRY": "Xbox Live is not available in the country of this account.",
+      "XBOX_ADULT_VERIFICATION": "This account needs adult verification on xbox.com before it can sign in.",
+      "XBOX_CHILD": "This is a child account. An adult needs to add it to a Microsoft family first.",
+      "NO_MINECRAFT": "This Microsoft account does not own Minecraft.",
+      "STATE_INVALID": "This sign-in link is no longer valid. Start again from the sign-in page.",
+      "OTHER_ACCOUNT": "This link was started from another account. Start again from your settings."
+    }
   },
   "plugin-settings": {
     "title": "Microsoft Login Settings",
     "setup-guide-title": "How to set up Microsoft Login",
+    "app-registrations": "App registrations",
     "setup-step-1": "— click New registration.",
     "setup-step-2": "Set a name for your app, select 'Personal Microsoft accounts only' as account type.",
     "setup-step-3": "Under Redirect URI, select 'Web' and enter the Redirect URI shown below.",
@@ -69,6 +80,9 @@
     "client-secret": "Client Secret",
     "client-secret-desc": "Secret value from Azure Portal → Certificates & Secrets.",
     "client-secret-new-placeholder": "Enter new client secret",
+    "edit-secret": "Edit secret",
+    "toggle-secret": "Show or hide secret",
+    "cancel-edit": "Cancel editing",
     "reveal-desc": "Enter your password to view the client secret.",
     "reveal-password-placeholder": "Your password",
     "reveal-cancel": "Cancel",
@@ -92,7 +106,7 @@
     }
   },
   "activity-logs": {
-    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> changed the authentication status of player <b>{targetUsername}</b> to <b>{newAccountType}</b>.",
+    "UPDATED_PLAYER_PREMIUM_STATUS": "<b>{username}</b> changed the authentication status of player <b>{targetUsername}</b> to <b>{newAccountType, select, PREMIUM {Premium} CRACKED {Cracked} other {Automatic}}</b>.",
     "UPDATED_PREMIUM_LOGIN_SETTINGS": "<b>{username}</b> updated the Premium Login plugin settings."
   },
   "fallback": {
@@ -129,7 +143,7 @@
     "description": "A Minecraft premium account has claimed your username. Please choose a new username to continue.",
     "input-label": "New Username",
     "save": "Save",
-    "saving": "Saving",
+    "saving": "Saving...",
     "success": "Username updated successfully! You can now log in with your new username.",
     "go-to-login": "Go to Login",
     "error": {
@@ -138,7 +152,8 @@
       "REGISTER_USERNAME_TOO_LONG": "Username must be at most 16 characters.",
       "REGISTER_INVALID_USERNAME": "Username can only contain letters, numbers and underscores.",
       "INVALID_TOKEN": "Invalid or expired link. Please log in with your email to set a new username.",
-      "CONNECTION_ERROR": "Connection error. Please try again."
+      "CONNECTION_ERROR": "Connection error. Please try again.",
+      "UNKNOWN": "Something went wrong. Please try again."
     }
   }
 }

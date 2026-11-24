@@ -24,6 +24,9 @@ class MicrosoftOAuthService(
         private const val SCOPE = "XboxLive.signin offline_access"
     }
 
+    /** A sign-in the account itself cannot pass; [reason] is the stable code the UI translates, the message is for the log. */
+    class MicrosoftAuthException(val reason: String, message: String) : RuntimeException(message)
+
     data class MinecraftProfile(
         val uuid: String,
         val username: String,
@@ -164,12 +167,16 @@ class MicrosoftOAuthService(
             val bodyStr = response.bodyAsString() ?: "no body"
             val body = try { response.bodyAsJsonObject() } catch (_: Exception) { null }
             val xErr = body?.getLong("XErr", 0L) ?: 0L
-            val message = when (xErr) {
-                2148916233L -> "This Microsoft account does not have an Xbox account."
-                2148916235L -> "Xbox Live is not available in this country."
-                2148916236L, 2148916237L -> "The account requires adult verification (South Korea)."
-                2148916238L -> "This is a child account. An adult needs to add it to a family."
-                else -> "XSTS authentication failed: ${response.statusCode()} (XErr: $xErr) Body: $bodyStr"
+            val reason = when (xErr) {
+                2148916233L -> "XBOX_NO_ACCOUNT"
+                2148916235L -> "XBOX_COUNTRY"
+                2148916236L, 2148916237L -> "XBOX_ADULT_VERIFICATION"
+                2148916238L -> "XBOX_CHILD"
+                else -> null
+            }
+            val message = "XSTS authentication failed: ${response.statusCode()} (XErr: $xErr) Body: $bodyStr"
+            if (reason != null) {
+                throw MicrosoftAuthException(reason, message)
             }
             throw RuntimeException(message)
         }
@@ -214,7 +221,7 @@ class MicrosoftOAuthService(
             .coAwait()
 
         if (response.statusCode() == 404) {
-            throw RuntimeException("This Microsoft account does not own Minecraft.")
+            throw MicrosoftAuthException("NO_MINECRAFT", "This Microsoft account does not own Minecraft.")
         }
 
         if (response.statusCode() != 200) {

@@ -74,6 +74,13 @@
 
     let loading = $state(false);
   let errorMessage = $state('');
+
+  /** The visitor's text for an error code: the translated `fallback.errors.<code>`, else the generic one. */
+  function errorText(code) {
+    const key = `fallback.errors.${code}`;
+    const text = code ? $_(key) : '';
+    return text && text !== `plugins.pano-plugin-premium-login.${key}` ? text : $_('microsoft.login-error');
+  }
   let mcUsername = $state('');
 
   onMount(() => {
@@ -99,7 +106,7 @@
         return;
       }
 
-      errorMessage = body.error?.code || $_('microsoft.login-error');
+      errorMessage = errorText(body.error?.code);
     } catch (e) {
       console.error('[pano-plugin-premium-login] Microsoft register init failed', e);
       errorMessage = $_('microsoft.login-error');

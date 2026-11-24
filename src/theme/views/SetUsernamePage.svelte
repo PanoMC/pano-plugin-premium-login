@@ -56,8 +56,8 @@
               class:disabled={loading || !newUsername || newUsername.length < 3}
               disabled={loading || !newUsername || newUsername.length < 3}>
               {#if loading}
-                <span class="spinner-border spinner-border-sm me-2" role="status" aria-label="Loading"></span>
-                <span>{$_('set-username.saving')}...</span>
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-label={$_('set-username.saving')}></span>
+                <span>{$_('set-username.saving')}</span>
               {:else}
                 {$_('set-username.save')}
               {/if}
@@ -125,7 +125,7 @@
       if (body.error) {
         const errorCode = body.error.code || 'UNKNOWN';
         const translationKey = ERROR_KEYS[errorCode];
-        error = translationKey ? $_(translationKey) : errorCode;
+        error = $_(translationKey || 'set-username.error.UNKNOWN');
         loading = false;
         return;
       }
